@@ -1,0 +1,60 @@
+<form class="form">
+  <div class="row">
+    <div class="col">
+      <mat-form-field>
+        <input matInput placeholder="First Name" name="firstName" required [(ngModel)]="person.FirstName">
+      </mat-form-field>
+    </div>
+    <div class="col">
+      <mat-form-field>
+        <input matInput placeholder="Last Name" name="lastName" required [(ngModel)]="person.LastName">
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <mat-form-field>
+        <input matInput placeholder="Email" type="email" name="emailAddress" required [(ngModel)]="person.EmailAddress">
+      </mat-form-field>
+    </div>
+    <div class="col">
+      <mat-form-field>
+        <input matInput placeholder="Phone Number" type="tel" name="phoneNumber" required [(ngModel)]="person.PhoneNumber">
+      </mat-form-field>
+    </div>
+  </div>
+
+  <mat-form-field>
+    <input matInput placeholder="Date of Birth" name="dateOfBirth" required [(ngModel)]="person.DateOfBirth" [matDatepicker]="dateOfBirthDatePicker">
+    <mat-datepicker-toggle matSuffix [for]="dateOfBirthDatePicker"></mat-datepicker-toggle>
+    <mat-datepicker #dateOfBirthDatePicker></mat-datepicker>
+  </mat-form-field>
+
+
+  <mat-form-field>
+    <input matInput placeholder="Address 1" name="address1" required [(ngModel)]="person.Address1">
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput placeholder="Address 2" name="address2" [(ngModel)]="person.Address2">
+  </mat-form-field>
+  <div class="row">
+    <div class="col">
+      <mat-form-field>
+        <input matInput placeholder="City" name="city" required [(ngModel)]="person.City">
+      </mat-form-field>
+    </div>
+    <div class="col-sm-3">
+      <mat-form-field>
+        <input matInput placeholder="State" #state name="state" required maxlength="2" [(ngModel)]="person.State">
+        <mat-hint align="end">{{state.value.length}} / 2</mat-hint>
+      </mat-form-field>
+    </div>
+    <div class="col">
+      <mat-form-field>
+        <input matInput placeholder="Zip Code" type="tel" #zipCode name="zipCode" required maxlength="5" [(ngModel)]="person.ZipCode">
+        <mat-hint align="end">{{zipCode.value.length}} / 5</mat-hint>
+      </mat-form-field>
+    </div>
+  </div>
+</form>
