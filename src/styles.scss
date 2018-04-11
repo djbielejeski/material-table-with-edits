@@ -12,6 +12,20 @@ mat-form-field {
   width: 100%;
 }
 
+mat-cell.overflow-ellipsis{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+mat-cell.always-visible, mat-header-cell.always-visible {
+  white-space: nowrap;
+  min-width: 120px;
+  margin-right: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .element-row {
   position: relative;
   cursor: pointer;

@@ -10,8 +10,8 @@
 <mat-table #table [dataSource]="sortedItems" matSort (matSortChange)="sortData($event)">
 
   <ng-container matColumnDef="fullName">
-    <mat-header-cell *matHeaderCellDef mat-sort-header="Name">Name</mat-header-cell>
-    <mat-cell *matCellDef="let item">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="Name" class="always-visible">Name</mat-header-cell>
+    <mat-cell *matCellDef="let item" class="always-visible">
       <span class="open-icon"><i class="fa fa-chevron-down"></i> </span>
       <span class="close-icon"><i class="fa fa-chevron-up"></i> </span>
      {{item.FirstName}} {{ item.LastName }}
@@ -21,21 +21,21 @@
 
   <ng-container matColumnDef="address">
     <mat-header-cell *matHeaderCellDef mat-sort-header="Address">Address</mat-header-cell>
-    <mat-cell *matCellDef="let item">
+    <mat-cell *matCellDef="let item" class="overflow-ellipsis">
       {{item.Address1}}{{ item.Address2 ? ' ' + item.Address2: '' }}, {{item.City}} {{item.State}} {{item.ZipCode}}
     </mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="phoneNumber">
     <mat-header-cell *matHeaderCellDef mat-sort-header="PhoneNumber">Phone</mat-header-cell>
-    <mat-cell *matCellDef="let item">
+    <mat-cell *matCellDef="let item" class="overflow-ellipsis">
       {{item.PhoneNumber}}
     </mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="emailAddress">
     <mat-header-cell *matHeaderCellDef mat-sort-header="EmailAddress">Email</mat-header-cell>
-    <mat-cell *matCellDef="let item">
+    <mat-cell *matCellDef="let item" class="overflow-ellipsis">
       {{item.EmailAddress}}
     </mat-cell>
   </ng-container>
