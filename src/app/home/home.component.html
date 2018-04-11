@@ -12,7 +12,8 @@
   <ng-container matColumnDef="fullName">
     <mat-header-cell *matHeaderCellDef mat-sort-header="Name">Name</mat-header-cell>
     <mat-cell *matCellDef="let item">
-      <span class="open-icon"> <i class="fa fa-chevron-down"></i> </span>
+      <span class="open-icon"><i class="fa fa-chevron-down"></i> </span>
+      <span class="close-icon"><i class="fa fa-chevron-up"></i> </span>
      {{item.FirstName}} {{ item.LastName }}
     </mat-cell>
   </ng-container>
@@ -45,6 +46,7 @@
            class="element-row"
            [cdkDetailRow]="row"
            [cdkDetailRowTpl]="expandedTemplate"
+           [cdkSortEvent]="sortEvent"
            tabindex="0"></mat-row>
 </mat-table>
 

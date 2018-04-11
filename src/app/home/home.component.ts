@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter } from '@angular/core';
 import {IPersonModel} from '@app/shared/models';
 import {PersonService} from '@app/shared/services';
 import {Sort} from '@angular/material';
@@ -19,7 +19,7 @@ export class HomeComponent implements OnInit {
 
   people: IPersonModel[] = [];
   sortedItems;
-
+  sortEvent = new EventEmitter<boolean>();
   selectedItem: IPersonModel;
   showEditForm: boolean;
 
@@ -48,6 +48,7 @@ export class HomeComponent implements OnInit {
   }
 
   sortData(sort: Sort) {
+    this.sortEvent.emit(true);
     const data = this.people.slice();
     if (!sort.active || sort.direction == '') {
       this.sortedItems = data;

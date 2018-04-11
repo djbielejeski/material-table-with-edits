@@ -21,18 +21,31 @@ mat-form-field {
   background: #f5f5f5;
 }
 
+
+.open-icon, .close-icon {
+  margin-right: 12px;
+  opacity: .7;
+}
+
+.close-icon {
+  display: none;
+}
+
 .element-row.expanded {
   border-bottom-color: transparent;
   .mat-cell {
     color: #ddd;
   }
+
+  .close-icon{
+    display: inline-block;
+  }
+
+  .open-icon{
+    display: none;
+  }
 }
 .expanded-row > * {
   width: 100%;
   padding: 16px 4px;
-}
-
-.open-icon {
-  margin-right: 12px;
-  opacity: .7;
 }

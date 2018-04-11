@@ -1,14 +1,19 @@
 import * as _ from 'lodash';
-import {Directive, HostBinding, HostListener, Input, TemplateRef, ViewContainerRef} from '@angular/core';
+import {Directive, HostBinding, HostListener, Input, TemplateRef, ViewContainerRef, AfterViewInit, OnDestroy, EventEmitter } from '@angular/core';
+import {Subject} from 'rxjs/Subject';
+import 'rxjs/add/operator/takeUntil';
 
 @Directive({
   selector: '[cdkDetailRow]'
 })
-export class CdkDetailRowDirective {
+export class CdkDetailRowDirective implements AfterViewInit, OnDestroy {
   private row: any;
   private cachedRow: any;
   private tRef: TemplateRef<any>;
   private opened: boolean;
+  private ngUnsubscribe: Subject<void> = new Subject<void>();
+
+  @Input('cdkSortEvent') cdkSortEvent: EventEmitter<boolean>;
 
   @HostBinding('class.expanded')
   get expended(): boolean {
@@ -30,7 +35,24 @@ export class CdkDetailRowDirective {
     }
   }
 
-  constructor(public vcRef: ViewContainerRef) { }
+  constructor(public vcRef: ViewContainerRef) {
+
+  }
+
+  ngAfterViewInit() {
+    if (this.cdkSortEvent) {
+      this.cdkSortEvent.takeUntil(this.ngUnsubscribe).subscribe(() => {
+        if (this.opened) {
+          this.toggle();
+        }
+      });
+    }
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
 
   @HostListener('click')
   onClick(): void {
