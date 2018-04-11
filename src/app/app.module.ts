@@ -14,21 +14,28 @@ import {
   MatInputModule,
   MatSelectModule,
   MatOptionModule,
-  MatSnackBarModule
+  MatSnackBarModule,
+  MatTableModule,
+  MatSortModule,
+  MatCardModule,
+  MatButtonModule
 } from '@angular/material';
 
 import { AppRootComponent } from '@app/app-root/app-root.component';
 import { HomeComponent } from '@app/home/home.component';
 
 import * as sharedComponents from '@app/shared/components';
-
+import * as services from '@app/shared/services';
 import { appRoutes } from '@app/core/routes';
+import {CdkDetailRowDirective} from '@app/shared/directives/detail-row.directive';
 
 @NgModule({
   declarations: [
     AppRootComponent,
     HomeComponent,
-    sharedComponents.PersonEditFormComponent
+    sharedComponents.PersonEditFormComponent,
+
+    CdkDetailRowDirective
   ],
   imports: [
     BrowserModule,
@@ -45,8 +52,14 @@ import { appRoutes } from '@app/core/routes';
     MatSelectModule,
     MatOptionModule,
     MatSnackBarModule,
+    MatTableModule,
+    MatSortModule,
+    MatCardModule,
+    MatButtonModule
   ],
-  providers: [],
+  providers: [
+    services.PersonService
+  ],
   bootstrap: [AppRootComponent]
 })
 export class AppModule { }

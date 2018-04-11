@@ -1,4 +1,62 @@
 <h1>Home</h1>
 
+<!--<app-person-edit-form [(person)]="selectedItem"></app-person-edit-form>-->
 
-<app-person-edit-form></app-person-edit-form>
+<!-- Working Expandable rows -->
+<!-- https://stackblitz.com/edit/angular-material2-issue-qatslc -->
+
+<button mat-raised-button color="accent" (click)="addItem()">Add</button>
+
+<mat-table #table [dataSource]="sortedItems" matSort (matSortChange)="sortData($event)">
+
+  <ng-container matColumnDef="fullName">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="Name">Name</mat-header-cell>
+    <mat-cell *matCellDef="let item">
+      {{item.FirstName}} {{ item.LastName }}
+    </mat-cell>
+  </ng-container>
+
+
+  <ng-container matColumnDef="address">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="Address">Address</mat-header-cell>
+    <mat-cell *matCellDef="let item">
+      {{item.Address1}}{{ item.Address2 ? ' ' + item.Address2: '' }}, {{item.City}} {{item.State}} {{item.ZipCode}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="phoneNumber">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="PhoneNumber">Phone</mat-header-cell>
+    <mat-cell *matCellDef="let item">
+      {{item.PhoneNumber}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="emailAddress">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="EmailAddress">Email</mat-header-cell>
+    <mat-cell *matCellDef="let item">
+      {{item.EmailAddress}}
+    </mat-cell>
+  </ng-container>
+
+  <!-- Expanded Content -->
+  <ng-container matColumnDef="expandedDetail">
+    <mat-cell *matCellDef="let item">
+      {{ item | json }}
+      <!--<app-person-edit-form [(person)]="item"></app-person-edit-form>-->
+    </mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"
+           matRipple
+           class="element-row"
+           [cdkDetailRow]="row"
+           [cdkDetailRowTpl]="expandedTemplate"></mat-row>
+</mat-table>
+
+<!-- Detail Template -->
+<ng-template #expandedTemplate let-item>
+  <div class="mat-row expanded-row" [@detailExpand] style="overflow: hidden">
+    <app-person-edit-form [person]="item"></app-person-edit-form>
+  </div>
+</ng-template>
