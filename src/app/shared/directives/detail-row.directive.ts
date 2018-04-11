@@ -37,6 +37,15 @@ export class CdkDetailRowDirective {
     this.toggle();
   }
 
+  @HostListener('keydown', ['$event'])
+  onKeyPress(event): void {
+    const keyCode = event.keyCode;
+    // Allow:  Escape, Enter
+    if ([27, 13].indexOf(keyCode) !== -1) {
+      this.toggle();
+    }
+  }
+
   toggle(): void {
     if (this.opened) {
       this.vcRef.clear();
