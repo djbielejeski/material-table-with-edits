@@ -18,7 +18,8 @@ import {
   MatTableModule,
   MatSortModule,
   MatCardModule,
-  MatButtonModule
+  MatButtonModule,
+  MatIconModule
 } from '@angular/material';
 
 import { AppRootComponent } from '@app/app-root/app-root.component';
@@ -55,7 +56,8 @@ import {CdkDetailRowDirective} from '@app/shared/directives/detail-row.directive
     MatTableModule,
     MatSortModule,
     MatCardModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
   ],
   providers: [
     services.PersonService

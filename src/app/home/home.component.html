@@ -12,7 +12,8 @@
   <ng-container matColumnDef="fullName">
     <mat-header-cell *matHeaderCellDef mat-sort-header="Name">Name</mat-header-cell>
     <mat-cell *matCellDef="let item">
-      {{item.FirstName}} {{ item.LastName }}
+      <span class="open-icon"> <i class="fa fa-chevron-down"></i> </span>
+     {{item.FirstName}} {{ item.LastName }}
     </mat-cell>
   </ng-container>
 
@@ -38,14 +39,6 @@
     </mat-cell>
   </ng-container>
 
-  <!-- Expanded Content -->
-  <ng-container matColumnDef="expandedDetail">
-    <mat-cell *matCellDef="let item">
-      {{ item | json }}
-      <!--<app-person-edit-form [(person)]="item"></app-person-edit-form>-->
-    </mat-cell>
-  </ng-container>
-
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;"
            matRipple
@@ -56,7 +49,7 @@
 
 <!-- Detail Template -->
 <ng-template #expandedTemplate let-item>
-  <div class="mat-row expanded-row" [@detailExpand] style="overflow: hidden">
+  <div class="mat-row expanded-row" [@detailExpand] style="overflow: hidden;">
     <app-person-edit-form [person]="item"></app-person-edit-form>
   </div>
 </ng-template>

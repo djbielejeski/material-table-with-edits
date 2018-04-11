@@ -1,5 +1,8 @@
+@import 'variables';
+
 /* You can add global styles to this file, and also import other style files */
 @import "~bootstrap/dist/css/bootstrap.css";
+@import '~font-awesome/scss/font-awesome';
 
 /*@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';*/
 @import "./app/app.theme.scss";
@@ -27,4 +30,9 @@ mat-form-field {
 .expanded-row > * {
   width: 100%;
   padding: 16px 4px;
+}
+
+.open-icon {
+  margin-right: 12px;
+  opacity: .7;
 }

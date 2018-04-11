@@ -1,5 +1,4 @@
 @import '~@angular/material/theming';
-
 // Available color palettes: https://www.google.com/design/spec/style/color.html
 $mcp-app-primary: mat-palette($mat-blue, 600);
 $mcp-app-accent:  mat-palette($mat-green, 600);
@@ -10,3 +9,5 @@ $primary: mat-color($mcp-app-primary);
 $accent: mat-color($mcp-app-accent);
 $warn: mat-color($mcp-app-warn);
 $danger: mat-color($mcp-app-danger);
+
+$fa-font-path : '../node_modules/font-awesome/fonts';

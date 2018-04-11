@@ -9,6 +9,4 @@ export interface IPersonModel {
   ZipCode: string;
   PhoneNumber: string;
   EmailAddress: string;
-
-  $editing: boolean;
 }

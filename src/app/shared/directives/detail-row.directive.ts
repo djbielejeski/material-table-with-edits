@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import {Directive, HostBinding, HostListener, Input, TemplateRef, ViewContainerRef} from '@angular/core';
 
 @Directive({
@@ -5,6 +6,7 @@ import {Directive, HostBinding, HostListener, Input, TemplateRef, ViewContainerR
 })
 export class CdkDetailRowDirective {
   private row: any;
+  private cachedRow: any;
   private tRef: TemplateRef<any>;
   private opened: boolean;
 
@@ -16,8 +18,8 @@ export class CdkDetailRowDirective {
   @Input()
   set cdkDetailRow(value: any) {
     if (value !== this.row) {
-      this.row = value;
-      // this.render();
+      this.row = _.clone(value);
+      this.cachedRow = value;
     }
   }
 
@@ -25,7 +27,6 @@ export class CdkDetailRowDirective {
   set template(value: TemplateRef<any>) {
     if (value !== this.tRef) {
       this.tRef = value;
-      // this.render();
     }
   }
 
@@ -39,9 +40,12 @@ export class CdkDetailRowDirective {
   toggle(): void {
     if (this.opened) {
       this.vcRef.clear();
-    } else {
+      this.row = _.clone(this.cachedRow);
+    }
+    else {
       this.render();
     }
+
     this.opened = this.vcRef.length > 0;
   }
 

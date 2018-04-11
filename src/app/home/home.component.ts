@@ -24,18 +24,11 @@ export class HomeComponent implements OnInit {
   showEditForm: boolean;
 
   displayedColumns = ['fullName', 'address', 'phoneNumber', 'emailAddress'];
-  isExpansionDetailRow = (index, row: IPersonModel) => { return row.$editing; };
-
   constructor(private personService: PersonService) { }
 
   ngOnInit() {
     this.people = this.personService.getPeople();
     this.sortedItems = this.people.slice();
-  }
-
-  editItem(person: IPersonModel) {
-    console.log(person);
-    person.$editing = true;
   }
 
   addItem() {
