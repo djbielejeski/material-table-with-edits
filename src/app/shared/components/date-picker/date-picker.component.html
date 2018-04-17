@@ -14,7 +14,7 @@ Date Picker
 <div>
   {{ currentMonth }}, {{ currentYear }}
 </div>
-
+<input type="text" [placeholder]="dateFormat" [(ngModel)]="userInputDate" (ngModelChange)="userInputDateChanges($event)"/>
 <input type="date" [(ngModel)]="selectedDateAsJSDate" />
 
 <table>

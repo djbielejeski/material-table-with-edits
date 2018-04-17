@@ -43,6 +43,49 @@ export class DatePickerComponent extends CustomControl<Date> {
 
   // My local copy
   selectedDate: moment.Moment;
+  userInputDate: string = "";
+
+  userInputDateChanges(value) {
+    setTimeout(() => {
+      // 1) strip all non-number characters from the input.
+      value = value.replace(/\D/g, "");
+
+      // First the
+
+      if (value) {
+        // 2) insert the mask characters at the correct locations.
+        const indexesOfSeperators = [];
+        for (let i = 0; i < this.dateFormat.length; i++) {
+          // Check if the item is NOT a letter.
+          if (!(/^[a-zA-Z]+$/.test(this.dateFormat[i]))) {
+            indexesOfSeperators.push({index: i - indexesOfSeperators.length, character: this.dateFormat[i]});
+          }
+        }
+
+        // Build up the date with the placeholder format.
+        let builtUpDate = "";
+        for (let i = 0; i <= indexesOfSeperators.length; i++) {
+          builtUpDate += value.substring(i == 0 ? 0 : indexesOfSeperators[i - 1].index, i != indexesOfSeperators.length ? indexesOfSeperators[i].index : value.length);
+
+          if (i < indexesOfSeperators.length && builtUpDate.length >= indexesOfSeperators[i].index) {
+            builtUpDate += indexesOfSeperators[i].character;
+          }
+        }
+
+        builtUpDate = builtUpDate.substring(0, this.dateFormat.length);
+
+        // 3) assign the value
+        this.userInputDate = builtUpDate;
+        const userInputAsMoment = moment(builtUpDate, this.dateFormat);
+        if (userInputAsMoment.isValid() && userInputAsMoment.year() > 1900) {
+          this.selectedDate = userInputAsMoment;
+          this.propagateChange(this.selectedDate);
+          this.init();
+        }
+      }
+    }, 0);
+  }
+
   get selectedDateAsJSDate(): string {
     return this.selectedDate ? this.selectedDate.format(moment.HTML5_FMT.DATE) : null;
   }
@@ -70,7 +113,6 @@ export class DatePickerComponent extends CustomControl<Date> {
     super();
     this.init();
   }
-
 
   private init() {
     const currentDate: moment.Moment = this.selectedDate ? this.selectedDate : moment();
