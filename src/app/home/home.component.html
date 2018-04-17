@@ -5,7 +5,15 @@
 <!-- Working Expandable rows -->
 <!-- https://stackblitz.com/edit/angular-material2-issue-qatslc -->
 
+<div>
+My Date: {{ myDate }}
+</div>
+
+<app-date-picker [(ngModel)]="myDate"></app-date-picker>
+
+<!--
 <button mat-raised-button color="accent" (click)="addItem()">Add</button>
+-->
 
 <mat-table #table [dataSource]="sortedItems" matSort (matSortChange)="sortData($event)">
 

@@ -1,0 +1,60 @@
+Date Picker
+
+<div>
+  SelectedDate: {{ selectedDate }}
+</div>
+<div>
+  PrettyDate: {{ prettyDate }}
+</div>
+
+<div>
+  JS Date for input: {{ selectedDateAsJSDate }}
+</div>
+
+<div>
+  {{ currentMonth }}, {{ currentYear }}
+</div>
+
+<input type="date" [(ngModel)]="selectedDateAsJSDate" />
+
+<table>
+  <thead>
+    <tr>
+      <td colspan="7" style="text-align: center">
+        <button (click)="changeCalendar(false)" [hidden]="calendarState == CalendarStates.ShowMonths" style="float: left"> < </button>
+        <strong (click)="changeCalendarState(true)" style="cursor: pointer;">{{ prettyMonth }}</strong>
+        <button (click)="changeCalendar(true)" [hidden]="calendarState == CalendarStates.ShowMonths" style="float: right"> > </button>
+      </td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let years of getYearsToShowOnTheCalendarAsGroups" [hidden]="calendarState != CalendarStates.ShowYears">
+      <td style="text-align: center; padding: 2px; border: 1px solid #ddd; border-radius: 2px; cursor: pointer;"
+          *ngFor="let year of years"
+          [style.font-weight]="year.year == currentYear ? 'bold' : ''"
+          (click)="selectYear(year)">
+        {{ year.year }}
+      </td>
+      <td></td>
+    </tr>
+    <tr *ngFor="let months of calendarMonths" [hidden]="calendarState != CalendarStates.ShowMonths">
+      <td [attr.colspan]="monthRowIndex == 0 ? 3 : 2"
+          style="text-align: center; padding: 8px; border: 1px solid #ddd; border-radius: 2px; cursor: pointer;"
+          *ngFor="let month of months; let monthRowIndex = index;"
+          [style.font-weight]="month.month == currentMonth ? 'bold' : ''"
+          (click)="selectMonth(month)">
+        {{ month.monthName }}
+      </td>
+      <td></td>
+    </tr>
+    <tr *ngFor="let week of calendarDatesAsWeeks" [hidden]="calendarState != CalendarStates.ShowDates">
+      <td style="text-align: center; padding: 4px; border: 1px solid #ddd; border-radius: 2px; cursor: pointer;"
+          *ngFor="let date of week"
+          [style.color]="date.month != currentMonth ? '#999' : '#333'"
+          [style.font-weight]="date.day == currentDay && date.month == currentMonth ? 'bold' : ''"
+          (click)="selectDate(date)">
+        {{ date.day }}
+      </td>
+    </tr>
+  </tbody>
+</table>

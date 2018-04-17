@@ -35,6 +35,7 @@ import {CdkDetailRowDirective} from '@app/shared/directives/detail-row.directive
     AppRootComponent,
     HomeComponent,
     sharedComponents.PersonEditFormComponent,
+    sharedComponents.DatePickerComponent,
 
     CdkDetailRowDirective
   ],
