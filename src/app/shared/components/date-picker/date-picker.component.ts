@@ -1,6 +1,9 @@
 import * as moment from 'moment';
 
-import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, AfterViewInit, OnInit, forwardRef } from '@angular/core';
+import {
+  Component, Input, Output, EventEmitter, ViewChild, ElementRef, AfterViewInit, OnInit, forwardRef,
+  HostListener
+} from '@angular/core';
 import { NgForm, ControlContainer, NgModel, ControlValueAccessor, Validator, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { CustomControl } from "@app/shared/components/custom-control/custom-control";
@@ -83,7 +86,6 @@ export class DatePickerComponent extends CustomControl<Date> {
     }
   }
 
-
   constructor() {
     super();
     this.init();
@@ -99,6 +101,9 @@ export class DatePickerComponent extends CustomControl<Date> {
     this.getDaysToShowOnTheCalendar();
     this.getYearsToShowOnTheCalendar();
   }
+
+
+
 
   // Clicked on from the calendar html
   selectDate(date: IDayModel) {
