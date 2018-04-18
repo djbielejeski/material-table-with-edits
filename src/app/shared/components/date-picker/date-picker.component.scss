@@ -34,6 +34,11 @@ input[type="date"]::-webkit-input-placeholder{
     position: absolute;
     z-index: 1001;
     top: 32px;
+
+    .disabled {
+      background-color: gray;
+      cursor: not-allowed;
+    }
   }
 }
 

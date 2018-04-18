@@ -18,6 +18,10 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 export class HomeComponent implements OnInit {
 
   myDate = new Date();
+  minDate = new Date(2000, 0, 1);
+  maxDate = new Date(2020, 0, 1);
+  disabledDates = [new Date(2018, 3, 17)];
+
   people: IPersonModel[] = [];
   sortedItems;
   sortEvent = new EventEmitter<boolean>();

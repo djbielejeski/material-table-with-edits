@@ -29,6 +29,7 @@
             *ngFor="let date of week"
             [style.color]="date.month != currentMonth ? '#999' : '#333'"
             [style.font-weight]="date.day == currentDay && date.month == currentMonth ? 'bold' : ''"
+            [ngClass]="{ 'disabled': dateDisabled(date) }"
             (click)="selectDate(date)">
           {{ date.day }}
         </td>
