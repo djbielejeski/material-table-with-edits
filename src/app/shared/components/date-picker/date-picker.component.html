@@ -8,14 +8,16 @@ Date Picker
 </div>
 
 <div>
-  JS Date for input: {{ selectedDateAsJSDate }}
+  Date formatted via mask for input: {{ selectedDateFormattedWithMask }}
 </div>
 
 <div>
   {{ currentMonth }}, {{ currentYear }}
 </div>
-<input type="text" [placeholder]="dateFormat" [(ngModel)]="userInputDate" (ngModelChange)="userInputDateChanges($event)"/>
-<input type="date" [(ngModel)]="selectedDateAsJSDate" />
+
+
+<input type="text" [textMask]="{ mask: dateMask.mask }" [placeholder]="dateMask.display" [attr.pattern]="patternForDateFormat" [(ngModel)]="selectedDateFormattedWithMask" />
+
 
 <table>
   <thead>

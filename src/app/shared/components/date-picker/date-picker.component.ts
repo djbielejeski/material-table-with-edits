@@ -4,7 +4,7 @@ import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, AfterVie
 import { NgForm, ControlContainer, NgModel, ControlValueAccessor, Validator, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { CustomControl } from "@app/shared/components/custom-control/custom-control";
-import {current} from 'codelyzer/util/syntaxKind';
+import {CalendarState, DatePickerMasks, IDayModel, IMaskModel, IMonthModel, IYearModel} from '@app/shared/models';
 
 @Component({
   selector: 'app-date-picker',
@@ -14,7 +14,7 @@ import {current} from 'codelyzer/util/syntaxKind';
 
 })
 export class DatePickerComponent extends CustomControl<Date> {
-  @Input() dateFormat = 'MM/DD/YYYY';
+  @Input() dateMask: IMaskModel = DatePickerMasks.DEFAULT;
   @Input() disabled: boolean;
   @Input() clearButton: boolean;
 
@@ -26,6 +26,14 @@ export class DatePickerComponent extends CustomControl<Date> {
       return this.selectedDate.date();
     }
     return -1;
+  }
+
+  get patternForDateFormat(): RegExp {
+    if (this.dateMask) {
+      return /[0-9]*/; // {" + this.dateMask.mask.length + "}"
+    }
+
+    return /[0-9]*/;
   }
 
   // Tells us if the calendar html is shown
@@ -43,57 +51,24 @@ export class DatePickerComponent extends CustomControl<Date> {
 
   // My local copy
   selectedDate: moment.Moment;
-  userInputDate: string = "";
 
-  userInputDateChanges(value) {
-    setTimeout(() => {
-      // 1) strip all non-number characters from the input.
-      value = value.replace(/\D/g, "");
+  get selectedDateFormattedWithMask(): string {
+    return this.selectedDate ? this.selectedDate.format(this.dateMask.display) : null;
+  }
 
-      // First the
+  set selectedDateFormattedWithMask(value: string) {
+    // Remove the mask character from the input.
+    value = value.replace(/_/g, "");
+    console.log(value);
+    if (value.length == this.dateMask.display.length) {
+      const inputAsDate = moment(value, this.dateMask.display);
 
-      if (value) {
-        // 2) insert the mask characters at the correct locations.
-        const indexesOfSeperators = [];
-        for (let i = 0; i < this.dateFormat.length; i++) {
-          // Check if the item is NOT a letter.
-          if (!(/^[a-zA-Z]+$/.test(this.dateFormat[i]))) {
-            indexesOfSeperators.push({index: i - indexesOfSeperators.length, character: this.dateFormat[i]});
-          }
-        }
-
-        // Build up the date with the placeholder format.
-        let builtUpDate = "";
-        for (let i = 0; i <= indexesOfSeperators.length; i++) {
-          builtUpDate += value.substring(i == 0 ? 0 : indexesOfSeperators[i - 1].index, i != indexesOfSeperators.length ? indexesOfSeperators[i].index : value.length);
-
-          if (i < indexesOfSeperators.length && builtUpDate.length >= indexesOfSeperators[i].index) {
-            builtUpDate += indexesOfSeperators[i].character;
-          }
-        }
-
-        builtUpDate = builtUpDate.substring(0, this.dateFormat.length);
-
-        // 3) assign the value
-        this.userInputDate = builtUpDate;
-        const userInputAsMoment = moment(builtUpDate, this.dateFormat);
-        if (userInputAsMoment.isValid() && userInputAsMoment.year() > 1900) {
-          this.selectedDate = userInputAsMoment;
-          this.propagateChange(this.selectedDate);
-          this.init();
-        }
+      if (inputAsDate.isValid() && inputAsDate.year() > 1900) {
+        this.selectedDate = inputAsDate;
+        this.propagateChange(this.selectedDate);
+        this.init();
       }
-    }, 0);
-  }
-
-  get selectedDateAsJSDate(): string {
-    return this.selectedDate ? this.selectedDate.format(moment.HTML5_FMT.DATE) : null;
-  }
-
-  set selectedDateAsJSDate(value: string) {
-    this.selectedDate = moment(value, moment.HTML5_FMT.DATE);
-    this.propagateChange(this.selectedDate);
-    this.init();
+    }
   }
 
   // Incoming from the outside world.
@@ -175,7 +150,7 @@ export class DatePickerComponent extends CustomControl<Date> {
       }
     }
     else {
-      if (this.calendarState == CalendarState.ShowDates){
+      if (this.calendarState == CalendarState.ShowDates) {
         return;
       }
       else {
@@ -186,7 +161,7 @@ export class DatePickerComponent extends CustomControl<Date> {
 
   get prettyDate(): string {
     if (this.selectedDate) {
-      return this.selectedDate.format(this.dateFormat);
+      return this.selectedDate.format(this.dateMask.display);
     }
 
     return "";
@@ -285,35 +260,4 @@ export class DatePickerComponent extends CustomControl<Date> {
 
     return weeks;
   }
-}
-
-export interface IYearModel {
-  year: number;
-}
-
-export interface IMonthModel {
-  monthName: string;
-  month: number;
-}
-export interface IDayModel {
-  weekday: DayOfTheWeek;
-  day: number;
-  month: number;
-  year: number;
-}
-
-export enum DayOfTheWeek {
-  Sunday = 0,
-  Monday = 1,
-  Tuesday = 2,
-  Wednesday = 3,
-  Thursday = 4,
-  Friday = 5,
-  Saturday = 6
-}
-
-export enum CalendarState {
-  ShowDates = 0,
-  ShowMonths = 1,
-  ShowYears = 2
 }

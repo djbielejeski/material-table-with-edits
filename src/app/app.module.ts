@@ -3,7 +3,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
-
+import { TextMaskModule } from 'angular2-text-mask';
 
 // Angular Material
 import {
@@ -44,6 +44,9 @@ import {CdkDetailRowDirective} from '@app/shared/directives/detail-row.directive
     FormsModule,
     BrowserAnimationsModule,
     RouterModule.forRoot(appRoutes),
+
+    // Text Mask
+    TextMaskModule,
 
     // Angular Material
     MatMenuModule,
