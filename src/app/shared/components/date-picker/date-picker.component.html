@@ -1,8 +1,20 @@
-<input type="text" appIsFocused [(isFocused)]="showCalendar" [textMask]="{ mask: dateMask.mask }" [placeholder]="dateMask.display" [attr.pattern]="patternForDateFormat" [(ngModel)]="selectedDateFormattedWithMask" />
+<div class="date-picker-container">
+  <div class="date-picker-input">
+    <input type="text"
+           tabindex="0"
+           [disabled]="disabled"
+           [textMask]="{ mask: dateMask.mask }"
+           [placeholder]="dateMask.display"
+           [(ngModel)]="selectedDateFormattedWithMask" />
+    <button class="open-calendar-button" tabindex="0" (click)="showCalendar = !showCalendar" [disabled]="disabled">
+      <i class="fa fa-calendar-o"></i>
+    </button>
+  </div>
 
-<div *ngIf="showCalendar">
-  <table>
-    <thead>
+  <div class="date-picker-clickout" *ngIf="showCalendar && !disabled" (click)="showCalendar = false"></div>
+  <div class="date-picker-calendar" *ngIf="showCalendar && !disabled">
+    <table>
+      <thead>
       <tr>
         <td colspan="7" style="text-align: center">
           <button (click)="changeCalendar(false)" [hidden]="calendarState == CalendarStates.ShowMonths" style="float: left"> < </button>
@@ -10,17 +22,18 @@
           <button (click)="changeCalendar(true)" [hidden]="calendarState == CalendarStates.ShowMonths" style="float: right"> > </button>
         </td>
       </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let years of getYearsToShowOnTheCalendarAsGroups" [hidden]="calendarState != CalendarStates.ShowYears">
-        <td style="text-align: center; padding: 2px; border: 1px solid #ddd; border-radius: 2px; cursor: pointer;"
-            *ngFor="let year of years"
-            [style.font-weight]="year.year == currentYear ? 'bold' : ''"
-            (click)="selectYear(year)">
-          {{ year.year }}
+      </thead>
+      <tbody>
+      <tr *ngFor="let week of calendarDatesAsWeeks" [hidden]="calendarState != CalendarStates.ShowDates">
+        <td style="text-align: center; padding: 4px; border: 1px solid #ddd; border-radius: 2px; cursor: pointer;"
+            *ngFor="let date of week"
+            [style.color]="date.month != currentMonth ? '#999' : '#333'"
+            [style.font-weight]="date.day == currentDay && date.month == currentMonth ? 'bold' : ''"
+            (click)="selectDate(date)">
+          {{ date.day }}
         </td>
-        <td></td>
       </tr>
+
       <tr *ngFor="let months of calendarMonths" [hidden]="calendarState != CalendarStates.ShowMonths">
         <td [attr.colspan]="monthRowIndex == 0 ? 3 : 2"
             style="text-align: center; padding: 8px; border: 1px solid #ddd; border-radius: 2px; cursor: pointer;"
@@ -31,32 +44,33 @@
         </td>
         <td></td>
       </tr>
-      <tr *ngFor="let week of calendarDatesAsWeeks" [hidden]="calendarState != CalendarStates.ShowDates">
-        <td style="text-align: center; padding: 4px; border: 1px solid #ddd; border-radius: 2px; cursor: pointer;"
-            *ngFor="let date of week"
-            [style.color]="date.month != currentMonth ? '#999' : '#333'"
-            [style.font-weight]="date.day == currentDay && date.month == currentMonth ? 'bold' : ''"
-            (click)="selectDate(date)">
-          {{ date.day }}
+      <tr *ngFor="let years of getYearsToShowOnTheCalendarAsGroups" [hidden]="calendarState != CalendarStates.ShowYears">
+        <td style="text-align: center; padding: 2px; border: 1px solid #ddd; border-radius: 2px; cursor: pointer;"
+            *ngFor="let year of years"
+            [style.font-weight]="year.year == currentYear ? 'bold' : ''"
+            (click)="selectYear(year)">
+          {{ year.year }}
         </td>
+        <td></td>
       </tr>
-    </tbody>
-  </table>
-</div>
+      </tbody>
+    </table>
 
-<div *ngIf="showCalendar">
-  <h4>Date Picker</h4>
+    <h4>Date Picker</h4>
 
-  <div>
-    SelectedDate: {{ selectedDate }}
+    <div>
+      SelectedDate: {{ selectedDate }}
+    </div>
+    <div>
+      PrettyDate: {{ prettyDate }}
+    </div>
+    <div>
+      Date formatted via mask for input: {{ selectedDateFormattedWithMask }}
+    </div>
+    <div>
+      {{ currentMonth }}, {{ currentYear }}
+    </div>
   </div>
-  <div>
-    PrettyDate: {{ prettyDate }}
-  </div>
-  <div>
-    Date formatted via mask for input: {{ selectedDateFormattedWithMask }}
-  </div>
-  <div>
-    {{ currentMonth }}, {{ currentYear }}
-  </div>
+
+
 </div>

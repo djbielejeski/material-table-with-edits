@@ -29,7 +29,6 @@ import * as sharedComponents from '@app/shared/components';
 import * as services from '@app/shared/services';
 import { appRoutes } from '@app/core/routes';
 import { CdkDetailRowDirective } from '@app/shared/directives/detail-row.directive';
-import { IsFocusedDirective } from '@app/shared/directives/is-focused.directive';
 
 @NgModule({
   declarations: [
@@ -38,8 +37,7 @@ import { IsFocusedDirective } from '@app/shared/directives/is-focused.directive'
     sharedComponents.PersonEditFormComponent,
     sharedComponents.DatePickerComponent,
 
-    CdkDetailRowDirective,
-    IsFocusedDirective,
+    CdkDetailRowDirective
   ],
   imports: [
     BrowserModule,

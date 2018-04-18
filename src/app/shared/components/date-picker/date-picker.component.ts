@@ -31,14 +31,6 @@ export class DatePickerComponent extends CustomControl<Date> {
     return -1;
   }
 
-  get patternForDateFormat(): RegExp {
-    if (this.dateMask) {
-      return /[0-9]*/; // {" + this.dateMask.mask.length + "}"
-    }
-
-    return /[0-9]*/;
-  }
-
   // Tells us if the calendar html is shown
   showCalendar: boolean;
   calendarState: CalendarState = CalendarState.ShowDates;
@@ -55,6 +47,7 @@ export class DatePickerComponent extends CustomControl<Date> {
   // My local copy
   selectedDate: moment.Moment;
 
+  // These two functions handle user typing and displaying the content in the input box.
   get selectedDateFormattedWithMask(): string {
     return this.selectedDate ? this.selectedDate.format(this.dateMask.display) : null;
   }
@@ -67,9 +60,12 @@ export class DatePickerComponent extends CustomControl<Date> {
       const inputAsDate = moment(value, this.dateMask.display);
 
       if (inputAsDate.isValid() && inputAsDate.year() > 1900) {
-        this.selectedDate = inputAsDate;
-        this.propagateChange(this.selectedDate);
-        this.init();
+        this.selectDate( {
+          weekday: inputAsDate.weekday(),
+          day: inputAsDate.date(),
+          month: inputAsDate.month(),
+          year: inputAsDate.year()
+        });
       }
     }
   }
@@ -86,7 +82,7 @@ export class DatePickerComponent extends CustomControl<Date> {
     }
   }
 
-  constructor() {
+  constructor(private eRef: ElementRef) {
     super();
     this.init();
   }
@@ -103,18 +99,21 @@ export class DatePickerComponent extends CustomControl<Date> {
   }
 
 
-
-
   // Clicked on from the calendar html
   selectDate(date: IDayModel) {
+    console.log("selectDate called");
     this.selectedDate = moment({ year: date.year, month: date.month, day: date.day });
     this.propagateChange(this.selectedDate);
     this.init();
+
+    this.showCalendar = false;
   }
 
   clear() {
     this.selectedDate = null;
     this.propagateChange(this.selectedDate);
+
+    this.showCalendar = false;
   }
 
   changeCalendar(forwards: boolean) {
@@ -173,7 +172,12 @@ export class DatePickerComponent extends CustomControl<Date> {
   }
 
   get prettyMonth(): string {
-    return moment({year: this.currentYear, month: this.currentMonth, day: 1}).format("MMMM, YYYY");
+    if (this.calendarState == CalendarState.ShowYears) {
+      return '' + this.currentYear;
+    }
+    else {
+      return moment({year: this.currentYear, month: this.currentMonth, day: 1}).format("MMMM, YYYY");
+    }
   }
 
   // Will always return an array of 42 years

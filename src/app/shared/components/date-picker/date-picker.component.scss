@@ -6,3 +6,34 @@ input[type="date"]::-webkit-clear-button {
 input[type="date"]::-webkit-input-placeholder{
   visibility: hidden !important;
 }
+
+.date-picker-container {
+  position: relative;
+
+  .date-picker-input {
+    .open-calendar-button {
+      margin-left: -5px;
+    }
+  }
+
+
+  .date-picker-clickout {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 1000;
+  }
+
+  .date-picker-calendar {
+    background-color: #fff;
+    border: 1px solid #aaa;
+    border-radius: 2px;
+    padding: 4px;
+    position: absolute;
+    z-index: 1001;
+    top: 32px;
+  }
+}
+
