@@ -16,47 +16,75 @@
     <table>
       <thead>
       <tr>
-        <td colspan="7" style="text-align: center">
-          <button (click)="changeCalendar(false)" [hidden]="calendarState == CalendarStates.ShowMonths" style="float: left"> < </button>
-          <strong (click)="changeCalendarState(true)" style="cursor: pointer;">{{ prettyMonth }}</strong>
-          <button (click)="changeCalendar(true)" [hidden]="calendarState == CalendarStates.ShowMonths" style="float: right"> > </button>
+        <!-- set the colspan to a huge number to make it span all of the visible columns in the table -->
+        <td colspan="1000" class="calendar-title-container">
+          <button class="calendar-title-button calendar-title-button-left"
+                  (click)="changeCalendar(false)"
+                  [hidden]="calendarState == CalendarStates.ShowMonths">
+            <i class="fa fa-chevron-left"></i>
+          </button>
+          <div class="calendar-title" (click)="changeCalendarState(true)">
+            {{ prettyMonth }}
+          </div>
+          <button class="calendar-title-button calendar-title-button-right"
+                  (click)="changeCalendar(true)"
+                  [hidden]="calendarState == CalendarStates.ShowMonths">
+            <i class="fa fa-chevron-right"></i>
+          </button>
         </td>
       </tr>
       </thead>
       <tbody>
+      <tr class="weekday-row" [hidden]="calendarState != CalendarStates.ShowDates">
+        <td>Sun</td>
+        <td>Mon</td>
+        <td>Tue</td>
+        <td>Wed</td>
+        <td>Thu</td>
+        <td>Fri</td>
+        <td>Sat</td>
+      </tr>
       <tr *ngFor="let week of calendarDatesAsWeeks" [hidden]="calendarState != CalendarStates.ShowDates">
-        <td style="text-align: center; padding: 4px; border: 1px solid #ddd; border-radius: 2px; cursor: pointer;"
+        <td class="calendar-date-cell"
+            [ngClass]="{ 'disabled': dateDisabled(date),
+                         'current-day': date.day == currentDay && date.month == currentMonth,
+                         'outside-selected-month': date.month != currentMonth,
+                         'preferred-start': datePreferredStart(date),
+                         'preferred-end': datePreferredEnd(date),
+                         'preferred-middle': datePreferredMiddle(date) }"
             *ngFor="let date of week"
-            [style.color]="date.month != currentMonth ? '#999' : '#333'"
-            [style.font-weight]="date.day == currentDay && date.month == currentMonth ? 'bold' : ''"
-            [ngClass]="{ 'disabled': dateDisabled(date) }"
             (click)="selectDate(date)">
           {{ date.day }}
+          <i class="fa fa-times fa-2x"></i>
         </td>
       </tr>
 
       <tr *ngFor="let months of calendarMonths" [hidden]="calendarState != CalendarStates.ShowMonths">
-        <td [attr.colspan]="monthRowIndex == 0 ? 3 : 2"
-            style="text-align: center; padding: 8px; border: 1px solid #ddd; border-radius: 2px; cursor: pointer;"
+        <td class="calendar-month-cell"
             *ngFor="let month of months; let monthRowIndex = index;"
             [style.font-weight]="month.month == currentMonth ? 'bold' : ''"
             (click)="selectMonth(month)">
-          {{ month.monthName }}
+          <div class="container-selector">
+            {{ month.monthName }}
+          </div>
         </td>
         <td></td>
       </tr>
       <tr *ngFor="let years of getYearsToShowOnTheCalendarAsGroups" [hidden]="calendarState != CalendarStates.ShowYears">
-        <td style="text-align: center; padding: 2px; border: 1px solid #ddd; border-radius: 2px; cursor: pointer;"
+        <td class="calendar-year-cell"
             *ngFor="let year of years"
             [style.font-weight]="year.year == currentYear ? 'bold' : ''"
             (click)="selectYear(year)">
-          {{ year.year }}
+          <div class="container-selector">
+            {{ year.year }}
+          </div>
         </td>
         <td></td>
       </tr>
       </tbody>
     </table>
 
+    <!--
     <h4>Date Picker</h4>
 
     <div>
@@ -71,6 +99,7 @@
     <div>
       {{ currentMonth }}, {{ currentYear }}
     </div>
+    -->
   </div>
 
 

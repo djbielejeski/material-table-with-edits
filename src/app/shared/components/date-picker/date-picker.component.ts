@@ -1,19 +1,17 @@
 import * as moment from 'moment';
 import * as _ from "lodash";
-import {
-  Component, Input, Output, EventEmitter, ViewChild, ElementRef, AfterViewInit, OnInit, forwardRef,
-  HostListener
-} from '@angular/core';
+import { Component, Input, ElementRef, forwardRef, ViewEncapsulation } from '@angular/core';
 import { NgForm, ControlContainer, NgModel, ControlValueAccessor, Validator, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { CustomControl } from "@app/shared/components/custom-control/custom-control";
-import {CalendarState, DatePickerMasks, IDayModel, IMaskModel, IMonthModel, IYearModel} from '@app/shared/models';
+import { CalendarState, DatePickerMasks, IDayModel, DayModel, IMaskModel, IMonthModel, IYearModel} from '@app/shared/models';
 
 @Component({
   selector: 'app-date-picker',
   templateUrl: './date-picker.component.html',
   styleUrls: ['./date-picker.component.scss'],
-  providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => DatePickerComponent), multi: true }]
+  providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => DatePickerComponent), multi: true }],
+  encapsulation: ViewEncapsulation.None
 
 })
 export class DatePickerComponent extends CustomControl<Date> {
@@ -23,11 +21,12 @@ export class DatePickerComponent extends CustomControl<Date> {
   @Input() minDate: Date = new Date(1900, 0, 1);
   @Input() maxDate: Date = null;
   @Input() disabledDates: Date[] = [];
+  @Input() preferredDates: Date[] = [];
 
   // FYI months are stored 0-11 instead of 1-12
   currentMonth: number;
   currentYear: number;
-  private yearPageCount: number = 42;
+  private yearPageCount: number = 12;
 
   get currentDay(): number {
     if (this.selectedDate) {
@@ -60,17 +59,11 @@ export class DatePickerComponent extends CustomControl<Date> {
   set selectedDateFormattedWithMask(value: string) {
     // Remove the mask character from the input.
     value = value.replace(/_/g, "");
-    console.log(value);
     if (value.length == this.dateMask.display.length) {
       const inputAsDate = moment(value, this.dateMask.display);
 
       if (inputAsDate.isValid() && inputAsDate.year() > 1900) {
-        this.selectDate( {
-          weekday: inputAsDate.weekday(),
-          day: inputAsDate.date(),
-          month: inputAsDate.month(),
-          year: inputAsDate.year()
-        });
+        this.selectDate(new DayModel(inputAsDate));
       }
     }
   }
@@ -247,12 +240,47 @@ export class DatePickerComponent extends CustomControl<Date> {
     return false;
   }
 
+  private datePreferred(date: IDayModel): boolean {
+    const dateAsMoment = moment({ year: date.year, month: date.month, day: date.day });
+
+    return _.find(this.preferredDates, (preferredDate: Date) => {
+      return preferredDate.getFullYear() == dateAsMoment.year() &&
+        preferredDate.getMonth() == dateAsMoment.month() &&
+        preferredDate.getDate() == dateAsMoment.date();
+    }) != null;
+  }
+
+  datePreferredStart(date: IDayModel): boolean {
+    if (this.datePreferred(date)) {
+      const dateBefore = moment({ year: date.year, month: date.month, day: date.day }).subtract(1, 'd');
+      return !this.datePreferred(new DayModel(dateBefore));
+    }
+    return false;
+  }
+
+  datePreferredEnd(date: IDayModel): boolean {
+    if (this.datePreferred(date)) {
+      const dateAfter = moment({ year: date.year, month: date.month, day: date.day }).add(1, 'd');
+      return !this.datePreferred(new DayModel(dateAfter));
+    }
+    return false;
+  }
+  datePreferredMiddle(date: IDayModel): boolean {
+    if (this.datePreferred(date)) {
+      const dateAfter = moment({ year: date.year, month: date.month, day: date.day }).add(1, 'd');
+      const dateBefore = moment({ year: date.year, month: date.month, day: date.day }).subtract(1, 'd');
+      return this.datePreferred(new DayModel(dateAfter)) && this.datePreferred(new DayModel(dateBefore));
+    }
+    return false;
+  }
+
+
   get getYearsToShowOnTheCalendarAsGroups() {
-    const total = this.calendarYears.length / 7;
+    const total = this.calendarYears.length / 3;
 
     const items = [];
     for (let i = 0; i < total; i++) {
-      items.push(this.calendarYears.slice(i * 7, (i * 7) + 7));
+      items.push(this.calendarYears.slice(i * 3, (i * 3) + 3));
     }
 
     return items;
@@ -269,22 +297,12 @@ export class DatePickerComponent extends CustomControl<Date> {
     const totalDaysToAddFromPreviousMonth = currentDayOfMonth.weekday() == 0 ? 7 : currentDayOfMonth.weekday();
     for (let i = totalDaysToAddFromPreviousMonth; i > 0; i--) {
       const dateToAdd = moment({ year: this.currentYear, month: this.currentMonth, day: 1}).subtract(i, 'd');
-      dates.push({
-        weekday: dateToAdd.weekday(),
-        year: dateToAdd.year(),
-        month: dateToAdd.month(),
-        day: dateToAdd.date()
-      });
+      dates.push(new DayModel(dateToAdd));
     }
 
     // Add the current month
     while (currentDayOfMonth.isBefore(firstDayOfNextMonth)) {
-      dates.push({
-        weekday: currentDayOfMonth.weekday(),
-        year: currentDayOfMonth.year(),
-        month: currentDayOfMonth.month(),
-        day: currentDayOfMonth.date()
-      });
+      dates.push(new DayModel(currentDayOfMonth));
 
       currentDayOfMonth.add(1, 'd');
     }
@@ -294,12 +312,7 @@ export class DatePickerComponent extends CustomControl<Date> {
     const totalDaysToAddFromNextMonth = 7 - currentDayOfMonth.weekday();
 
     for (let i = 0; i < totalDaysToAddFromNextMonth; i++) {
-      dates.push({
-        weekday: currentDayOfMonth.weekday(),
-        year: currentDayOfMonth.year(),
-        month: currentDayOfMonth.month(),
-        day: currentDayOfMonth.date()
-      });
+      dates.push(new DayModel(currentDayOfMonth));
 
       currentDayOfMonth.add(1, 'd');
     }

@@ -1,3 +1,5 @@
+$link-color: rgb(0, 123, 255);
+
 input[type="date"]::-webkit-calendar-picker-indicator,
 input[type="date"]::-webkit-inner-spin-button,
 input[type="date"]::-webkit-clear-button {
@@ -9,10 +11,28 @@ input[type="date"]::-webkit-input-placeholder{
 
 .date-picker-container {
   position: relative;
+  display: inline-block;
 
   .date-picker-input {
     .open-calendar-button {
       margin-left: -5px;
+      padding: 2px 12px;
+      color: #555;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      cursor: pointer;
+      border-radius: 3px;
+      border-top-left-radius: 0px;
+      border-bottom-left-radius: 0px;
+    }
+
+    input {
+      border-radius: 3px;
+      border-top-right-radius: 0px;
+      border-bottom-right-radius: 0px;
+      border: 1px solid #ddd;
+      border-right: 0px;
+      padding: 2px 6px;
     }
   }
 
@@ -28,17 +48,143 @@ input[type="date"]::-webkit-input-placeholder{
 
   .date-picker-calendar {
     background-color: #fff;
-    border: 1px solid #aaa;
-    border-radius: 2px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
     padding: 4px;
     position: absolute;
     z-index: 1001;
     top: 32px;
+    box-shadow: 1px 1px 1px #eee;
 
-    .disabled {
-      background-color: gray;
-      cursor: not-allowed;
+    table {
+      width: 100%;
+
+      tbody {
+
+
+        .weekday-row td {
+          border-bottom: 1px solid #eee;
+          color: #007bff;
+          text-align: center;
+          font-size: 90%;
+          padding-bottom: 4px;
+          cursor: default;
+        }
+
+        .calendar-date-cell {
+          text-align: center;
+          padding: 4px;
+          border-radius: 2px;
+          cursor: pointer;
+          color: #333;
+          padding: 4px 8px;
+
+          &.current-day {
+            font-weight: bold;
+          }
+
+          &.outside-selected-month {
+            color: #999;
+          }
+
+          &.preferred-start, &.preferred-middle, &.preferred-end {
+            background-color: #5cb85c;
+            color: #fff;
+
+            &:hover, &:focus {
+              color: #333;
+            }
+          }
+
+          &.preferred-middle {
+            border-radius: 0px;
+          }
+
+          &.preferred-start {
+            border-bottom-left-radius: 60px;
+            border-top-left-radius: 60px;
+          }
+
+
+          &.preferred-end {
+            border-bottom-right-radius: 60px;
+            border-top-right-radius: 60px;
+          }
+
+          &:hover, &:focus {
+            background-color: #eee;
+          }
+
+          &.disabled {
+            position: relative;
+            background-color: #eee;
+            cursor: not-allowed;
+            border-radius: 0px;
+
+            i {
+              display: inline-block;
+              position: absolute;
+              top: 0;
+              right: 0;
+              left: 0;
+              bottom: 0;
+              opacity: 0.3;
+              color: red;
+            }
+          }
+
+          i {
+            display: none;
+          }
+        }
+
+        .calendar-month-cell, .calendar-year-cell  {
+          text-align: center;
+          border: none;
+
+          .container-selector {
+            color: $link-color;
+            border-radius: 60px;
+            padding: 8px;
+            cursor: pointer;
+            min-width: 86px;
+            font-size: 90%;
+
+            &:hover, &:focus {
+              background-color: #eee;
+            }
+          }
+        }
+      }
     }
+
+    .calendar-title-container{
+      text-align: center;
+      padding: 4px 0px 8px;
+
+      .calendar-title {
+        cursor: pointer;
+        font-weight: bold;
+        color: $link-color;
+        display: inline-block;
+      }
+
+      .calendar-title-button {
+        border: none;
+        background-color: #fff;
+        padding: 0px 8px;
+        color: $link-color;
+        cursor: pointer;
+
+        &.calendar-title-button-left {
+          float: left
+        }
+        &.calendar-title-button-right {
+          float: right
+        }
+      }
+    }
+
   }
 }
 

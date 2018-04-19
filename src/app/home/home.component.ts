@@ -21,6 +21,7 @@ export class HomeComponent implements OnInit {
   minDate = new Date(2000, 0, 1);
   maxDate = new Date(2020, 0, 1);
   disabledDates = [new Date(2018, 3, 17)];
+  preferredDates = [new Date(2018, 3, 16), new Date(2018, 3, 18), new Date(2018, 3, 19), new Date(2018, 3, 20), new Date(2018, 3, 21), new Date(2018, 3, 22)]
 
   people: IPersonModel[] = [];
   sortedItems;
