@@ -1,7 +1,7 @@
 import * as moment from 'moment';
 import * as _ from "lodash";
-import { Component, Input, ElementRef, forwardRef, ViewEncapsulation } from '@angular/core';
-import { NgForm, ControlContainer, NgModel, ControlValueAccessor, Validator, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {Component, Input, ElementRef, forwardRef, ViewEncapsulation, Injector} from '@angular/core';
+import {NgForm, ControlContainer, NgModel, ControlValueAccessor, Validator, NG_VALUE_ACCESSOR, NgControl} from '@angular/forms';
 
 import { CustomControl } from "@app/shared/components/custom-control/custom-control";
 import { CalendarState, DatePickerMasks, IDayModel, DayModel, IMaskModel, IMonthModel, IYearModel} from '@app/shared/models';
@@ -22,6 +22,7 @@ export class DatePickerComponent extends CustomControl<Date> {
   @Input() maxDate: Date = null;
   @Input() disabledDates: Date[] = [];
   @Input() preferredDates: Date[] = [];
+  @Input() showTodayButton: boolean;
 
   // FYI months are stored 0-11 instead of 1-12
   currentMonth: number;
@@ -57,6 +58,8 @@ export class DatePickerComponent extends CustomControl<Date> {
   }
 
   set selectedDateFormattedWithMask(value: string) {
+    let valid = false;
+
     // Remove the mask character from the input.
     value = value.replace(/_/g, "");
     if (value.length == this.dateMask.display.length) {
@@ -64,7 +67,14 @@ export class DatePickerComponent extends CustomControl<Date> {
 
       if (inputAsDate.isValid() && inputAsDate.year() > 1900) {
         this.selectDate(new DayModel(inputAsDate));
+        valid = true;
       }
+    }
+
+    // Need to set the ngcontrol to invalid if the user types in garbage.
+    if (!valid) {
+      const ngControl = this.injector.get(NgControl);
+      ngControl.control.setErrors({ invalid: true });
     }
   }
 
@@ -80,7 +90,7 @@ export class DatePickerComponent extends CustomControl<Date> {
     }
   }
 
-  constructor(private eRef: ElementRef) {
+  constructor(private injector: Injector) {
     super();
     this.init();
   }
@@ -115,6 +125,40 @@ export class DatePickerComponent extends CustomControl<Date> {
     this.propagateChange(this.selectedDate);
 
     this.showCalendar = false;
+  }
+
+  selectToday() {
+    this.selectDate(new DayModel(moment()));
+  }
+
+  isSelectedDate(date: IDayModel): boolean {
+    const comparedDate = new DayModel(this.selectedDate);
+    return date.year == comparedDate.year && date.month == comparedDate.month && date.day == comparedDate.day;
+  }
+
+  isSelectedDateMonth(month: IMonthModel): boolean {
+    const comparedDate = new DayModel(this.selectedDate);
+    return this.currentYear == comparedDate.year && month.month == comparedDate.month;
+  }
+
+  isSelectedDateYear(year: IYearModel): boolean {
+    const comparedDate = new DayModel(this.selectedDate);
+    return year.year == comparedDate.year;
+  }
+
+  isToday(date: IDayModel): boolean {
+    const today = new DayModel(moment());
+    return date.year == today.year && date.month == today.month && date.day == today.day;
+  }
+
+  isThisMonth(month: IMonthModel): boolean {
+    const today = new DayModel(moment());
+    return this.currentYear == today.year && month.month == today.month;
+  }
+
+  isThisYear(year: IYearModel): boolean {
+    const today = new DayModel(moment());
+    return year.year == today.year;
   }
 
 

@@ -47,7 +47,8 @@
       <tr *ngFor="let week of calendarDatesAsWeeks" [hidden]="calendarState != CalendarStates.ShowDates">
         <td class="calendar-date-cell"
             [ngClass]="{ 'disabled': dateDisabled(date),
-                         'current-day': date.day == currentDay && date.month == currentMonth,
+                         'is-today': isToday(date),
+                         'selected-date': isSelectedDate(date),
                          'outside-selected-month': date.month != currentMonth,
                          'preferred-start': datePreferredStart(date),
                          'preferred-end': datePreferredEnd(date),
@@ -55,16 +56,16 @@
             *ngFor="let date of week"
             (click)="selectDate(date)">
           {{ date.day }}
-          <i class="fa fa-times fa-2x"></i>
         </td>
       </tr>
 
       <tr *ngFor="let months of calendarMonths" [hidden]="calendarState != CalendarStates.ShowMonths">
         <td class="calendar-month-cell"
             *ngFor="let month of months; let monthRowIndex = index;"
-            [style.font-weight]="month.month == currentMonth ? 'bold' : ''"
             (click)="selectMonth(month)">
-          <div class="container-selector">
+          <div class="container-selector"
+               [ngClass]="{ 'is-today': isThisMonth(month),
+                         'selected-date': isSelectedDateMonth(month) }">
             {{ month.monthName }}
           </div>
         </td>
@@ -73,9 +74,10 @@
       <tr *ngFor="let years of getYearsToShowOnTheCalendarAsGroups" [hidden]="calendarState != CalendarStates.ShowYears">
         <td class="calendar-year-cell"
             *ngFor="let year of years"
-            [style.font-weight]="year.year == currentYear ? 'bold' : ''"
             (click)="selectYear(year)">
-          <div class="container-selector">
+          <div class="container-selector"
+               [ngClass]="{ 'is-today': isThisYear(year),
+                         'selected-date': isSelectedDateYear(year) }">
             {{ year.year }}
           </div>
         </td>
@@ -83,6 +85,10 @@
       </tr>
       </tbody>
     </table>
+
+    <div class="button-container">
+      <button class="today-button" (click)="selectToday()" *ngIf="showTodayButton">Today</button>
+    </div>
 
     <!--
     <h4>Date Picker</h4>

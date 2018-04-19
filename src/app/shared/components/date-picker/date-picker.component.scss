@@ -36,7 +36,6 @@ input[type="date"]::-webkit-input-placeholder{
     }
   }
 
-
   .date-picker-clickout {
     position: fixed;
     top: 0;
@@ -64,7 +63,7 @@ input[type="date"]::-webkit-input-placeholder{
 
         .weekday-row td {
           border-bottom: 1px solid #eee;
-          color: #007bff;
+          color: #999;
           text-align: center;
           font-size: 90%;
           padding-bottom: 4px;
@@ -79,8 +78,14 @@ input[type="date"]::-webkit-input-placeholder{
           color: #333;
           padding: 4px 8px;
 
-          &.current-day {
+          &.is-today {
             font-weight: bold;
+          }
+
+          &.selected-date{
+            background-color: #1e88e5 !important;
+            color: #fff;
+            border-radius: 60px;
           }
 
           &.outside-selected-month {
@@ -88,12 +93,7 @@ input[type="date"]::-webkit-input-placeholder{
           }
 
           &.preferred-start, &.preferred-middle, &.preferred-end {
-            background-color: #5cb85c;
-            color: #fff;
-
-            &:hover, &:focus {
-              color: #333;
-            }
+            background-color: #d9ffd9;
           }
 
           &.preferred-middle {
@@ -117,24 +117,10 @@ input[type="date"]::-webkit-input-placeholder{
 
           &.disabled {
             position: relative;
-            background-color: #eee;
+            background-color: #ffc0c0;
             cursor: not-allowed;
-            border-radius: 0px;
-
-            i {
-              display: inline-block;
-              position: absolute;
-              top: 0;
-              right: 0;
-              left: 0;
-              bottom: 0;
-              opacity: 0.3;
-              color: red;
-            }
-          }
-
-          i {
-            display: none;
+            border-radius: 60px;
+            color: #999;
           }
         }
 
@@ -149,6 +135,15 @@ input[type="date"]::-webkit-input-placeholder{
             cursor: pointer;
             min-width: 86px;
             font-size: 90%;
+
+            &.is-today {
+              border: 1px solid #ddd;
+            }
+
+            &.selected-date{
+              background-color: #1e88e5 !important;
+              color: #fff;
+            }
 
             &:hover, &:focus {
               background-color: #eee;
@@ -185,6 +180,20 @@ input[type="date"]::-webkit-input-placeholder{
       }
     }
 
+  }
+
+  .button-container {
+    text-align: center;
+    margin: 8px 0px 4px;
+
+    .today-button {
+      padding: 2px 12px;
+      color: $link-color;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      cursor: pointer;
+      border-radius: 3px;
+    }
   }
 }
 
