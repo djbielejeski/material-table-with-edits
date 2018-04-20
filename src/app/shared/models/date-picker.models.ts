@@ -23,9 +23,11 @@ export class DayModel implements IDayModel {
   year: number = 0;
 
   constructor(date: moment.Moment) {
-    this.weekday = date.weekday();
-    this.day = date.date();
-    this.month = date.month();
-    this.year = date.year();
+    if (date) {
+      this.weekday = date.weekday();
+      this.day = date.date();
+      this.month = date.month();
+      this.year = date.year();
+    }
   }
 }

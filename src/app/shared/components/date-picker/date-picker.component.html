@@ -1,5 +1,5 @@
 <div class="date-picker-container">
-  <div class="date-picker-input">
+  <div class="date-picker-input" [hidden]="mode == DatePickerModes.Calendar">
     <input type="text"
            tabindex="0"
            [disabled]="disabled"
@@ -11,8 +11,8 @@
     </button>
   </div>
 
-  <div class="date-picker-clickout" *ngIf="showCalendar && !disabled" (click)="showCalendar = false"></div>
-  <div class="date-picker-calendar" *ngIf="showCalendar && !disabled">
+  <div class="date-picker-clickout" *ngIf="mode != DatePickerModes.Calendar && showCalendar && !disabled" (click)="showCalendar = false"></div>
+  <div class="date-picker-calendar" *ngIf="mode == DatePickerModes.Calendar || (showCalendar && !disabled)" [ngClass]="{ 'with-input': mode == DatePickerModes.Input }">
     <table>
       <thead>
       <tr>
@@ -86,8 +86,8 @@
       </tbody>
     </table>
 
-    <div class="button-container">
-      <button class="today-button" (click)="selectToday()" *ngIf="showTodayButton">Today</button>
+    <div class="button-container" *ngIf="showTodayButton">
+      <button class="today-button" (click)="selectToday()">Today</button>
     </div>
 
     <!--

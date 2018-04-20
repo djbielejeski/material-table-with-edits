@@ -4,7 +4,7 @@ import {Component, Input, ElementRef, forwardRef, ViewEncapsulation, Injector} f
 import {NgForm, ControlContainer, NgModel, ControlValueAccessor, Validator, NG_VALUE_ACCESSOR, NgControl} from '@angular/forms';
 
 import { CustomControl } from "@app/shared/components/custom-control/custom-control";
-import { CalendarState, DatePickerMasks, IDayModel, DayModel, IMaskModel, IMonthModel, IYearModel} from '@app/shared/models';
+import { DatePickerMode, CalendarState, DatePickerMasks, IDayModel, DayModel, IMaskModel, IMonthModel, IYearModel} from '@app/shared/models';
 
 @Component({
   selector: 'app-date-picker',
@@ -18,6 +18,7 @@ export class DatePickerComponent extends CustomControl<Date> {
   @Input() dateMask: IMaskModel = DatePickerMasks.DEFAULT;
   @Input() disabled: boolean;
 
+  @Input() mode: DatePickerMode = DatePickerMode.Input;
   @Input() minDate: Date = new Date(1900, 0, 1);
   @Input() maxDate: Date = null;
   @Input() disabledDates: Date[] = [];
@@ -40,6 +41,7 @@ export class DatePickerComponent extends CustomControl<Date> {
   showCalendar: boolean;
   calendarState: CalendarState = CalendarState.ShowDates;
   CalendarStates = CalendarState;
+  DatePickerModes = DatePickerMode;
   calendarDates: IDayModel[] = [];
   calendarYears: IYearModel[] = [];
   calendarMonths = [

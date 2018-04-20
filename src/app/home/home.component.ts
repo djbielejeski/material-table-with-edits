@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter } from '@angular/core';
-import {IPersonModel} from '@app/shared/models';
+import { IPersonModel, DatePickerMode } from '@app/shared/models';
 import {PersonService} from '@app/shared/services';
 import {Sort} from '@angular/material';
 import {animate, state, style, transition, trigger} from '@angular/animations';
@@ -22,6 +22,7 @@ export class HomeComponent implements OnInit {
   maxDate = new Date(2020, 0, 1);
   disabledDates = [new Date(2018, 3, 17)];
   preferredDates = [new Date(2018, 3, 16), new Date(2018, 3, 18), new Date(2018, 3, 19), new Date(2018, 3, 20), new Date(2018, 3, 21), new Date(2018, 3, 22)]
+  datePickerMode = DatePickerMode.Input;
 
   people: IPersonModel[] = [];
   sortedItems;
