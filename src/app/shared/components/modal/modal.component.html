@@ -8,7 +8,8 @@
       </div>
     </div>
     <div class="modal-body">
-      <p [innerHTML]="options.body"></p>
+      <p *ngIf="options.body" [innerHTML]="options.body"></p>
+      <ng-template modal-body></ng-template>
 
       <div class="modal-button-container">
         <div class="dialog-button-bar">

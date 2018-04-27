@@ -18,8 +18,11 @@ My Date: {{ myDate }}
                  [mode]="datePickerMode">
 </app-date-picker>
 
+<button mat-raised-button color="primary" (click)="showDefaultModal()">
+  Show Default Modal
+</button>
 
-<button mat-raised-button color="primary" (click)="showCustomModal()">
+<button mat-raised-button color="accent" (click)="showCustomModal()">
   Show Custom Modal
 </button>
 

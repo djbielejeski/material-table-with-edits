@@ -27,6 +27,9 @@ import { OverlayModule } from '@angular/cdk/overlay';
 
 import { AppRootComponent } from '@app/app-root/app-root.component';
 import { HomeComponent } from '@app/home/home.component';
+import { DummyComponent } from '@app/dummy/dummy.component';
+
+import { ModalBodyDirective } from '@app/shared/directives/modal-body.directive';
 
 import * as sharedComponents from '@app/shared/components';
 import * as services from '@app/shared/services';
@@ -37,11 +40,13 @@ import { CdkDetailRowDirective } from '@app/shared/directives/detail-row.directi
   declarations: [
     AppRootComponent,
     HomeComponent,
+    DummyComponent,
     sharedComponents.PersonEditFormComponent,
     sharedComponents.DatePickerComponent,
     sharedComponents.ModalComponent,
 
     CdkDetailRowDirective,
+    ModalBodyDirective
   ],
   imports: [
     BrowserModule,
@@ -78,7 +83,8 @@ import { CdkDetailRowDirective } from '@app/shared/directives/detail-row.directi
   entryComponents: [
     // Needs to be added here because otherwise we can't
     // dynamically render this component at runtime
-    sharedComponents.ModalComponent
+    sharedComponents.ModalComponent,
+    DummyComponent
   ]
 })
 export class AppModule { }

@@ -1,12 +1,13 @@
-import {InjectionToken} from '@angular/core';
+import {InjectionToken, Type} from '@angular/core';
 import {OverlayConfig} from '@angular/cdk/overlay';
 
 export interface IModal {
- title: string;
- body: string;
- hasCloseButton: boolean;
- closeOnOutsideClick?: boolean;
- buttons: IModalButton[];
+  title: string;
+  body?: string;
+  component?: Type<any>;
+  hasCloseButton: boolean;
+  closeOnOutsideClick?: boolean;
+  buttons: IModalButton[];
 }
 
 export interface IModalButton {

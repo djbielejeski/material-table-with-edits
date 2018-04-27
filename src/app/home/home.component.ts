@@ -3,6 +3,7 @@ import { IPersonModel, DatePickerMode, ModalOverlayRef } from '@app/shared/model
 import { PersonService, ModalService} from '@app/shared/services';
 import {Sort} from '@angular/material';
 import {animate, state, style, transition, trigger} from '@angular/animations';
+import {DummyComponent} from '@app/dummy/dummy.component';
 
 @Component({
   selector: 'app-home',
@@ -81,10 +82,26 @@ export class HomeComponent implements OnInit {
     return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
   }
 
-  showCustomModal() {
+  showDefaultModal() {
+    // This one uses the default body tag
     this.modalReference = this.modalService.open({
       title: "Hello Home Page!",
       body: "<p>Body content</p><br/><p>2nd Paragraph</p>",
+      hasCloseButton: true,
+      closeOnOutsideClick: true,
+      buttons: [{
+        text: "Close",
+        cssClasses: 'btn btn-primary',
+        click: this.closeModal
+      }]
+    });
+  }
+
+  showCustomModal() {
+    // This one uses a component reference
+    this.modalReference = this.modalService.open({
+      title: "Hello Home Page!",
+      component: DummyComponent,
       hasCloseButton: true,
       closeOnOutsideClick: true,
       buttons: [{
@@ -93,13 +110,8 @@ export class HomeComponent implements OnInit {
          click: this.closeModal
         }]
     });
-
-    /* // Example showing how to close the modal in code
-    setTimeout(() => {
-      modalReference.close();
-    }, 2000);
-    */
   }
+
 
   private closeModal = () => {
     this.modalReference.close();
