@@ -1,0 +1,22 @@
+<div class="modal-container">
+  <div class="modal-content">
+    <div class="modal-header">
+      {{ options.title }}
+
+      <div class="modal-header-close-button" (click)="closeOnXClickHandler()" *ngIf="options.hasCloseButton">
+        <i class="fa fa-times"></i>
+      </div>
+    </div>
+    <div class="modal-body">
+      <p [innerHTML]="options.body"></p>
+
+      <div class="modal-button-container">
+        <div class="dialog-button-bar">
+          <button *ngFor="let button of options.buttons" [ngClass]="button.cssClasses" (click)="button.click()">
+            {{ button.text}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

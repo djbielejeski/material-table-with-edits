@@ -22,6 +22,9 @@ import {
   MatIconModule
 } from '@angular/material';
 
+// CDK Imports
+import { OverlayModule } from '@angular/cdk/overlay';
+
 import { AppRootComponent } from '@app/app-root/app-root.component';
 import { HomeComponent } from '@app/home/home.component';
 
@@ -36,14 +39,18 @@ import { CdkDetailRowDirective } from '@app/shared/directives/detail-row.directi
     HomeComponent,
     sharedComponents.PersonEditFormComponent,
     sharedComponents.DatePickerComponent,
+    sharedComponents.ModalComponent,
 
-    CdkDetailRowDirective
+    CdkDetailRowDirective,
   ],
   imports: [
     BrowserModule,
     FormsModule,
     BrowserAnimationsModule,
     RouterModule.forRoot(appRoutes),
+
+    // Angular CDK
+    OverlayModule,
 
     // Text Mask
     TextMaskModule,
@@ -64,8 +71,14 @@ import { CdkDetailRowDirective } from '@app/shared/directives/detail-row.directi
     MatIconModule
   ],
   providers: [
-    services.PersonService
+    services.PersonService,
+    services.ModalService
   ],
-  bootstrap: [AppRootComponent]
+  bootstrap: [AppRootComponent],
+  entryComponents: [
+    // Needs to be added here because otherwise we can't
+    // dynamically render this component at runtime
+    sharedComponents.ModalComponent
+  ]
 })
 export class AppModule { }

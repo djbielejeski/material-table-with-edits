@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 import * as _ from "lodash";
-import {Component, Input, ElementRef, forwardRef, ViewEncapsulation, Injector} from '@angular/core';
+import {Component, Input, ElementRef, forwardRef, ViewEncapsulation, Injector, Output, EventEmitter} from '@angular/core';
 import {NgForm, ControlContainer, NgModel, ControlValueAccessor, Validator, NG_VALUE_ACCESSOR, NgControl} from '@angular/forms';
 
 import { CustomControl } from "@app/shared/components/custom-control/custom-control";
@@ -24,6 +24,8 @@ export class DatePickerComponent extends CustomControl<Date> {
   @Input() disabledDates: Date[] = [];
   @Input() preferredDates: Date[] = [];
   @Input() showTodayButton: boolean;
+
+  @Output() warnings = new EventEmitter<string[]>();
 
   // FYI months are stored 0-11 instead of 1-12
   currentMonth: number;
@@ -67,9 +69,21 @@ export class DatePickerComponent extends CustomControl<Date> {
     if (value.length == this.dateMask.display.length) {
       const inputAsDate = moment(value, this.dateMask.display);
 
-      if (inputAsDate.isValid() && inputAsDate.year() > 1900) {
+
+      if (inputAsDate.isValid() && inputAsDate.year() > 1900 && this.dateDisabled(new DayModel(inputAsDate))) {
+
+        // Date is valid, after 1900, and not disabled.
+        // Check if the date is outside of our preferred dates array
+        if (this.preferredDates.length > 0 && !this.datePreferred(new DayModel(inputAsDate))) {
+          // If this date is not preferred, add a warning.
+
+        }
+
         this.selectDate(new DayModel(inputAsDate));
         valid = true;
+      }
+      else {
+
       }
     }
 

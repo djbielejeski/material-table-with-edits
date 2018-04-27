@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter } from '@angular/core';
-import { IPersonModel, DatePickerMode } from '@app/shared/models';
-import {PersonService} from '@app/shared/services';
+import { IPersonModel, DatePickerMode, ModalOverlayRef } from '@app/shared/models';
+import { PersonService, ModalService} from '@app/shared/services';
 import {Sort} from '@angular/material';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 
@@ -30,8 +30,10 @@ export class HomeComponent implements OnInit {
   selectedItem: IPersonModel;
   showEditForm: boolean;
 
+  private modalReference: ModalOverlayRef;
+
   displayedColumns = ['fullName', 'address', 'phoneNumber', 'emailAddress'];
-  constructor(private personService: PersonService) { }
+  constructor(private personService: PersonService, private modalService: ModalService) { }
 
   ngOnInit() {
     this.people = this.personService.getPeople();
@@ -77,5 +79,29 @@ export class HomeComponent implements OnInit {
 
   private compare(a, b, isAsc) {
     return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  }
+
+  showCustomModal() {
+    this.modalReference = this.modalService.open({
+      title: "Hello Home Page!",
+      body: "<p>Body content</p><br/><p>2nd Paragraph</p>",
+      hasCloseButton: true,
+      closeOnOutsideClick: true,
+      buttons: [{
+         text: "Close",
+         cssClasses: 'btn btn-primary',
+         click: this.closeModal
+        }]
+    });
+
+    /* // Example showing how to close the modal in code
+    setTimeout(() => {
+      modalReference.close();
+    }, 2000);
+    */
+  }
+
+  private closeModal = () => {
+    this.modalReference.close();
   }
 }

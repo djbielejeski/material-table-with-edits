@@ -63,3 +63,10 @@ mat-cell.always-visible, mat-header-cell.always-visible {
   width: 100%;
   padding: 16px 4px;
 }
+
+
+/* Custom Modal Styls */
+.cdk-overlay-backdrop.cdk-overlay-backdrop-showing.dark-backdrop{
+  background: #000;
+  opacity: 0.85 !important;
+}
