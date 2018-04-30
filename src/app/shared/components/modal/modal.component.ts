@@ -16,6 +16,7 @@ export class ModalComponent implements OnInit {
   }
 
   ngOnInit() {
+    // This handles rendering inner content if they pass in a component
     if (this.options.component) {
       const componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.options.component);
 

@@ -24,6 +24,7 @@ import {
 
 // CDK Imports
 import { OverlayModule } from '@angular/cdk/overlay';
+import {PortalModule} from '@angular/cdk/portal';
 
 import { AppRootComponent } from '@app/app-root/app-root.component';
 import { HomeComponent } from '@app/home/home.component';
@@ -35,12 +36,18 @@ import * as sharedComponents from '@app/shared/components';
 import * as services from '@app/shared/services';
 import { appRoutes } from '@app/core/routes';
 import { CdkDetailRowDirective } from '@app/shared/directives/detail-row.directive';
+import {OverlayDemo, RotiniPanel , KeyboardTrackingPanel, SpaghettiPanel} from '@app/overlay-demo/overlay-demo.component';
+
 
 @NgModule({
   declarations: [
     AppRootComponent,
     HomeComponent,
     DummyComponent,
+    OverlayDemo,
+    RotiniPanel,
+    KeyboardTrackingPanel,
+    SpaghettiPanel,
     sharedComponents.PersonEditFormComponent,
     sharedComponents.DatePickerComponent,
     sharedComponents.ModalComponent,
@@ -56,6 +63,7 @@ import { CdkDetailRowDirective } from '@app/shared/directives/detail-row.directi
 
     // Angular CDK
     OverlayModule,
+    PortalModule,
 
     // Text Mask
     TextMaskModule,
@@ -84,7 +92,10 @@ import { CdkDetailRowDirective } from '@app/shared/directives/detail-row.directi
     // Needs to be added here because otherwise we can't
     // dynamically render this component at runtime
     sharedComponents.ModalComponent,
-    DummyComponent
+    DummyComponent,
+    RotiniPanel,
+    KeyboardTrackingPanel,
+    SpaghettiPanel,
   ]
 })
 export class AppModule { }
