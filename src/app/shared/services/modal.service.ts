@@ -51,6 +51,8 @@ export class ModalService {
       .centerHorizontally()
       .centerVertically();
 
+    console.log(positionStrategy);
+
     config.scrollStrategy = this.overlay.scrollStrategies.block();
     config.positionStrategy = positionStrategy;
 
