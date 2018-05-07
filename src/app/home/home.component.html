@@ -5,34 +5,59 @@
 <!-- Working Expandable rows -->
 <!-- https://stackblitz.com/edit/angular-material2-issue-qatslc -->
 
-<div>
-My Date: {{ myDate }}
+<h3 class="mt-4 mb-2 border-bottom pb-2">Date Picker Component</h3>
+<div class="row">
+  <div class="col">
+    <app-date-picker [(ngModel)]="myDate"
+                     [minDate]="minDate"
+                     [maxDate]="maxDate"
+                     [disabledDates]="disabledDates"
+                     [preferredDates]="preferredDates"
+                     [showTodayButton]="true"
+                     [mode]="datePickerMode">
+    </app-date-picker>
+
+
+    <p>
+      My Date: {{ myDate }}
+    </p>
+
+  </div>
+  <div class="col">
+    <div class="bg-light px-3 border rounded">
+<pre><code>
+&lt;app-date-picker
+  [(ngModel)]="myDate"
+  [minDate]="minDate"
+  [maxDate]="maxDate"
+  [disabledDates]="disabledDates"
+  [preferredDates]="preferredDates"
+  [showTodayButton]="true"
+  [mode]="datePickerMode"&gt;
+&lt;/app-date-picker&gt;
+</code></pre>
+    </div>
+  </div>
 </div>
 
-<app-date-picker [(ngModel)]="myDate"
-                 [minDate]="minDate"
-                 [maxDate]="maxDate"
-                 [disabledDates]="disabledDates"
-                 [preferredDates]="preferredDates"
-                 [showTodayButton]="true"
-                 [mode]="datePickerMode">
-</app-date-picker>
 
-<button mat-raised-button color="primary" (click)="showDefaultModal()">
-  Show Default Modal
-</button>
+<h3 class="mt-4 mb-2 border-bottom pb-2">Modals</h3>
+<div>
+  <button mat-raised-button color="primary" (click)="showDefaultModal()">
+    Show Default Modal
+  </button>
 
-<button mat-raised-button color="accent" (click)="showCustomModal()">
-  Show Custom Modal
-</button>
+  <button mat-raised-button color="accent" (click)="showCustomModal()">
+    Show Custom Modal
+  </button>
 
-<button [routerLink]="['overlay-demo']">
-  Angular CDK Overlay Examples
-</button>
-<!--
-<button mat-raised-button color="accent" (click)="addItem()">Add</button>
--->
+  <button [routerLink]="['overlay-demo']">
+    Angular CDK Overlay Examples
+  </button>
+</div>
 
+
+<h3 class="mt-4 mb-2 border-bottom pb-2">Editable Table</h3>
 <mat-table #table [dataSource]="sortedItems" matSort (matSortChange)="sortData($event)">
 
   <ng-container matColumnDef="fullName">
