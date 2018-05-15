@@ -60,7 +60,7 @@ export class DatePickerComponent extends CustomControl<Date> {
       const inputAsDate = moment(value, this.dateMask.display);
 
 
-      if (inputAsDate.isValid() && inputAsDate.year() > 1900 && this.dateDisabled(new DayModel(inputAsDate))) {
+      if (inputAsDate.isValid() && inputAsDate.year() >= 1900 && !this.dateDisabled(new DayModel(inputAsDate))) {
         // Date is valid, after 1900, and not disabled.
         // Check if the date is outside of our preferred dates array
         if (this.preferredDates.length > 0 && !this.datePreferred(new DayModel(inputAsDate))) {
@@ -416,11 +416,4 @@ export class DatePickerComponent extends CustomControl<Date> {
   private getPageIndexForYear(year: number): number {
     return Math.floor((year - this.minAvailableYear) / this.yearPageCount);
   }
-
-
-
-
-
-
-
 }
