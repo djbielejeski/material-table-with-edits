@@ -44,15 +44,15 @@
         <td>Fri</td>
         <td>Sat</td>
       </tr>
-      <tr *ngFor="let week of calendarDatesAsWeeks" [hidden]="calendarState != CalendarStates.ShowDates">
+      <tr *ngFor="let week of calendarDates" [hidden]="calendarState != CalendarStates.ShowDates">
         <td class="calendar-date-cell"
-            [ngClass]="{ 'disabled': dateDisabled(date),
-                         'is-today': isToday(date),
-                         'selected-date': isSelectedDate(date),
-                         'outside-selected-month': date.month != currentMonth,
-                         'preferred-start': datePreferredStart(date),
-                         'preferred-end': datePreferredEnd(date),
-                         'preferred-middle': datePreferredMiddle(date) }"
+            [ngClass]="{ 'disabled': date.disabled,
+                         'is-today': date.isToday,
+                         'selected-date': date.isSelectedDate,
+                         'outside-selected-month': date.outsideSelectedMonth,
+                         'preferred-start': date.preferredStart,
+                         'preferred-end': date.preferredEnd,
+                         'preferred-middle': date.preferredMiddle }"
             *ngFor="let date of week"
             (click)="selectDate(date)">
           {{ date.day }}
@@ -64,20 +64,18 @@
             *ngFor="let month of months; let monthRowIndex = index;"
             (click)="selectMonth(month)">
           <div class="container-selector"
-               [ngClass]="{ 'is-today': isThisMonth(month),
-                         'selected-date': isSelectedDateMonth(month) }">
+               [ngClass]="{ 'is-today': month.isToday, 'selected-date': month.isSelectedDate }">
             {{ month.monthName }}
           </div>
         </td>
         <td></td>
       </tr>
-      <tr *ngFor="let years of getYearsToShowOnTheCalendarAsGroups" [hidden]="calendarState != CalendarStates.ShowYears">
+      <tr *ngFor="let years of calendarYears" [hidden]="calendarState != CalendarStates.ShowYears">
         <td class="calendar-year-cell"
             *ngFor="let year of years"
             (click)="selectYear(year)">
           <div class="container-selector"
-               [ngClass]="{ 'is-today': isThisYear(year),
-                         'selected-date': isSelectedDateYear(year) }">
+               [ngClass]="{ 'is-today': year.isToday, 'selected-date': year.isSelectedDate }">
             {{ year.year }}
           </div>
         </td>

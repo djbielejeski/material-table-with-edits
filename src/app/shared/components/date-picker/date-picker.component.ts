@@ -4,7 +4,7 @@ import {Component, Input, ElementRef, forwardRef, ViewEncapsulation, Injector, O
 import {NgForm, ControlContainer, NgModel, ControlValueAccessor, Validator, NG_VALUE_ACCESSOR, NgControl} from '@angular/forms';
 
 import { CustomControl } from "@app/shared/components/custom-control/custom-control";
-import { DatePickerMode, CalendarState, DatePickerMasks, IDayModel, DayModel, IMaskModel, IMonthModel, IYearModel} from '@app/shared/models';
+import { DatePickerMode, CalendarState, DatePickerMasks, IDayModel, DayModel, IMaskModel, IMonthModel, MonthModel, IYearModel} from '@app/shared/models';
 
 @Component({
   selector: 'app-date-picker',
@@ -27,31 +27,21 @@ export class DatePickerComponent extends CustomControl<Date> {
 
   @Output() warnings = new EventEmitter<string[]>();
 
-  // FYI months are stored 0-11 instead of 1-12
+  // months are stored 0-11 instead of 1-12
   currentMonth: number;
   currentYear: number;
   private yearPageCount: number = 12;
 
-  get currentDay(): number {
-    if (this.selectedDate) {
-      return this.selectedDate.date();
-    }
-    return -1;
-  }
 
   // Tells us if the calendar html is shown
   showCalendar: boolean;
   calendarState: CalendarState = CalendarState.ShowDates;
   CalendarStates = CalendarState;
   DatePickerModes = DatePickerMode;
-  calendarDates: IDayModel[] = [];
-  calendarYears: IYearModel[] = [];
-  calendarMonths = [
-      [<IMonthModel> { monthName: "January", month: 0 }, <IMonthModel> { monthName: "February", month: 1 }, <IMonthModel> { monthName: "March", month: 2 }],
-      [<IMonthModel> { monthName: "April", month: 3 }, <IMonthModel> { monthName: "May", month: 4 }, <IMonthModel> { monthName: "June", month: 5 }],
-      [<IMonthModel> { monthName: "July", month: 6 }, <IMonthModel> { monthName: "August", month: 7 }, <IMonthModel> { monthName: "September", month: 8 }],
-      [<IMonthModel> { monthName: "October", month: 9 }, <IMonthModel> { monthName: "November", month: 10 }, <IMonthModel> { monthName: "December", month: 11 }],
-  ];
+
+  calendarDates: IDayModel[][] = [];
+  calendarMonths: IMonthModel[][] = [];
+  calendarYears: IYearModel[][] = [];
 
   // My local copy
   selectedDate: moment.Moment;
@@ -71,19 +61,15 @@ export class DatePickerComponent extends CustomControl<Date> {
 
 
       if (inputAsDate.isValid() && inputAsDate.year() > 1900 && this.dateDisabled(new DayModel(inputAsDate))) {
-
         // Date is valid, after 1900, and not disabled.
         // Check if the date is outside of our preferred dates array
         if (this.preferredDates.length > 0 && !this.datePreferred(new DayModel(inputAsDate))) {
           // If this date is not preferred, add a warning.
-
+          // TODO maybe
         }
 
         this.selectDate(new DayModel(inputAsDate));
         valid = true;
-      }
-      else {
-
       }
     }
 
@@ -119,234 +105,11 @@ export class DatePickerComponent extends CustomControl<Date> {
     this.currentMonth = currentDate.month();
 
     this.getDaysToShowOnTheCalendar();
+    this.getMonthsToShowOnTheCalendar();
     this.getYearsToShowOnTheCalendar();
   }
 
-
-  // Clicked on from the calendar html
-  selectDate(date: IDayModel) {
-    if (this.dateDisabled(date)) {
-      return;
-    }
-
-    this.selectedDate = moment({ year: date.year, month: date.month, day: date.day });
-    this.propagateChange(this.selectedDate);
-    this.init();
-
-    this.showCalendar = false;
-  }
-
-  clear() {
-    this.selectedDate = null;
-    this.propagateChange(this.selectedDate);
-
-    this.showCalendar = false;
-  }
-
-  selectToday() {
-    this.selectDate(new DayModel(moment()));
-  }
-
-  isSelectedDate(date: IDayModel): boolean {
-    const comparedDate = new DayModel(this.selectedDate);
-    return date.year == comparedDate.year && date.month == comparedDate.month && date.day == comparedDate.day;
-  }
-
-  isSelectedDateMonth(month: IMonthModel): boolean {
-    const comparedDate = new DayModel(this.selectedDate);
-    return this.currentYear == comparedDate.year && month.month == comparedDate.month;
-  }
-
-  isSelectedDateYear(year: IYearModel): boolean {
-    const comparedDate = new DayModel(this.selectedDate);
-    return year.year == comparedDate.year;
-  }
-
-  isToday(date: IDayModel): boolean {
-    const today = new DayModel(moment());
-    return date.year == today.year && date.month == today.month && date.day == today.day;
-  }
-
-  isThisMonth(month: IMonthModel): boolean {
-    const today = new DayModel(moment());
-    return this.currentYear == today.year && month.month == today.month;
-  }
-
-  isThisYear(year: IYearModel): boolean {
-    const today = new DayModel(moment());
-    return year.year == today.year;
-  }
-
-
-  selectMonth(month: IMonthModel) {
-    this.currentMonth = moment({ year: this.currentYear, month: month.month, day: 1}).month();
-    this.getDaysToShowOnTheCalendar();
-    this.changeCalendarState(false);
-  }
-
-  selectYear(year: IYearModel) {
-    this.currentYear = year.year;
-    this.changeCalendarState(false);
-  }
-
-  changeCalendarState(backup: boolean) {
-    if (backup) {
-      if (this.calendarState == CalendarState.ShowYears) {
-        return;
-      }
-      else {
-        this.calendarState++;
-      }
-    }
-    else {
-      if (this.calendarState == CalendarState.ShowDates) {
-        return;
-      }
-      else {
-        this.calendarState--;
-      }
-    }
-  }
-
-  get prettyDate(): string {
-    if (this.selectedDate) {
-      return this.selectedDate.format(this.dateMask.display);
-    }
-
-    return "";
-  }
-
-  get prettyMonth(): string {
-    if (this.calendarState == CalendarState.ShowYears) {
-      return '' + this.currentYear;
-    }
-    else {
-      return moment({year: this.currentYear, month: this.currentMonth, day: 1}).format("MMMM, YYYY");
-    }
-  }
-
-  changeCalendar(forwards: boolean) {
-    if (this.calendarState == CalendarState.ShowDates) {
-      // Change the month
-      const nextMonth = moment({year: this.currentYear, month: this.currentMonth, day: 1}).add(forwards ? 1 : -1, 'M');
-      this.currentMonth = nextMonth.month();
-      this.currentYear = nextMonth.year();
-
-      this.getDaysToShowOnTheCalendar();
-    }
-    else if (this.calendarState == CalendarState.ShowYears) {
-      // Change the years array
-      const currentPageIndex = this.getPageIndexForYear(this.currentYear);
-      if (forwards) {
-        if (currentPageIndex != (this.yearTotalPages - 1)) {
-          this.currentYear = this.getStartingYearForPage(currentPageIndex + 1);
-        }
-      }
-      else {
-        if (currentPageIndex > 0) {
-          this.currentYear = this.getStartingYearForPage(currentPageIndex - 1);
-        }
-      }
-
-      this.getYearsToShowOnTheCalendar();
-    }
-  }
-
-  get minAvailableYear(): number {
-    return this.minDate.getFullYear();
-  }
-
-  get maxAvailableYear(): number {
-    return this.maxDate == null ? 9999 : this.maxDate.getFullYear();
-  }
-
-  get yearTotalPages(): number {
-    return Math.ceil((this.maxAvailableYear - this.minAvailableYear) / this.yearPageCount);
-  }
-
-  private getStartingYearForPage(pageIndex: number): number {
-    return this.minAvailableYear + this.yearPageCount * pageIndex;
-  }
-
-  private getPageIndexForYear(year: number): number {
-    return Math.floor((year - this.minAvailableYear) / this.yearPageCount);
-  }
-
-  getYearsToShowOnTheCalendar() {
-    const years: IYearModel[] = [];
-      const pageIndexForYear = this.getPageIndexForYear(this.currentYear);
-      const startingYearForThisPage = this.getStartingYearForPage(pageIndexForYear);
-      for (var i = startingYearForThisPage; i < startingYearForThisPage + this.yearPageCount; i++) {
-        if (i <= this.maxAvailableYear) {
-          years.push({ year: i });
-        }
-      }
-
-      this.calendarYears = years;
-  }
-
-  dateDisabled(date: IDayModel): boolean {
-    const dateAsMoment = moment({ year: date.year, month: date.month, day: date.day });
-    if ((this.minDate && dateAsMoment.isBefore(moment(this.minDate))) ||
-        (this.maxDate && dateAsMoment.isAfter(moment(this.maxDate))) ||
-        (_.find(this.disabledDates, (disabledDate: Date) => {
-          return disabledDate.getFullYear() == dateAsMoment.year() &&
-            disabledDate.getMonth() == dateAsMoment.month() &&
-            disabledDate.getDate() == dateAsMoment.date();
-        }) != null)) {
-      return true;
-    }
-
-    return false;
-  }
-
-  private datePreferred(date: IDayModel): boolean {
-    const dateAsMoment = moment({ year: date.year, month: date.month, day: date.day });
-
-    return _.find(this.preferredDates, (preferredDate: Date) => {
-      return preferredDate.getFullYear() == dateAsMoment.year() &&
-        preferredDate.getMonth() == dateAsMoment.month() &&
-        preferredDate.getDate() == dateAsMoment.date();
-    }) != null;
-  }
-
-  datePreferredStart(date: IDayModel): boolean {
-    if (this.datePreferred(date)) {
-      const dateBefore = moment({ year: date.year, month: date.month, day: date.day }).subtract(1, 'd');
-      return !this.datePreferred(new DayModel(dateBefore));
-    }
-    return false;
-  }
-
-  datePreferredEnd(date: IDayModel): boolean {
-    if (this.datePreferred(date)) {
-      const dateAfter = moment({ year: date.year, month: date.month, day: date.day }).add(1, 'd');
-      return !this.datePreferred(new DayModel(dateAfter));
-    }
-    return false;
-  }
-  datePreferredMiddle(date: IDayModel): boolean {
-    if (this.datePreferred(date)) {
-      const dateAfter = moment({ year: date.year, month: date.month, day: date.day }).add(1, 'd');
-      const dateBefore = moment({ year: date.year, month: date.month, day: date.day }).subtract(1, 'd');
-      return this.datePreferred(new DayModel(dateAfter)) && this.datePreferred(new DayModel(dateBefore));
-    }
-    return false;
-  }
-
-
-  get getYearsToShowOnTheCalendarAsGroups() {
-    const total = this.calendarYears.length / 3;
-
-    const items = [];
-    for (let i = 0; i < total; i++) {
-      items.push(this.calendarYears.slice(i * 3, (i * 3) + 3));
-    }
-
-    return items;
-  }
-
-
+  // Days
   getDaysToShowOnTheCalendar() {
     // Get the first day of the month.
     const currentDayOfMonth = moment({ year: this.currentYear, month: this.currentMonth, day: 1});
@@ -377,17 +140,287 @@ export class DatePickerComponent extends CustomControl<Date> {
       currentDayOfMonth.add(1, 'd');
     }
 
-    this.calendarDates = dates;
-  }
+    // Update each day with the different boolean properties
+    _.each(dates, (date: IDayModel) => {
+      date.disabled = this.dateDisabled(date);
+      date.isToday = this.isToday(date);
+      date.isSelectedDate = this.isSelectedDate(date);
+      date.outsideSelectedMonth = date.month != this.currentMonth;
+      date.preferredStart = this.datePreferredStart(date);
+      date.preferredEnd = this.datePreferredEnd(date);
+      date.preferredMiddle = this.datePreferredMiddle(date);
+    });
 
-  get calendarDatesAsWeeks() {
-    const totalWeeks = this.calendarDates.length / 7;
+    // Break it apart into weeks
+    const totalWeeks = dates.length / 7;
 
-    const weeks = [];
+    const weeks: IDayModel[][] = [];
     for (let i = 0; i < totalWeeks; i++) {
-      weeks.push(this.calendarDates.slice(i * 7, (i * 7) + 7));
+      weeks.push(dates.slice(i * 7, (i * 7) + 7));
     }
 
-    return weeks;
+    this.calendarDates = weeks;
   }
+
+  private dateDisabled(date: IDayModel): boolean {
+    const dateAsMoment = moment({ year: date.year, month: date.month, day: date.day });
+    if ((this.minDate && dateAsMoment.isBefore(moment(this.minDate))) ||
+      (this.maxDate && dateAsMoment.isAfter(moment(this.maxDate))) ||
+      (_.find(this.disabledDates, (disabledDate: Date) => {
+        return disabledDate.getFullYear() == dateAsMoment.year() &&
+          disabledDate.getMonth() == dateAsMoment.month() &&
+          disabledDate.getDate() == dateAsMoment.date();
+      }) != null)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private isToday(date: IDayModel): boolean {
+    const today = new DayModel(moment());
+    return date.year == today.year && date.month == today.month && date.day == today.day;
+  }
+
+
+  private isSelectedDate(date: IDayModel): boolean {
+    const comparedDate = new DayModel(this.selectedDate);
+    return date.year == comparedDate.year && date.month == comparedDate.month && date.day == comparedDate.day;
+  }
+
+  private datePreferred(date: IDayModel): boolean {
+    const dateAsMoment = moment({ year: date.year, month: date.month, day: date.day });
+
+    return _.find(this.preferredDates, (preferredDate: Date) => {
+      return preferredDate.getFullYear() == dateAsMoment.year() &&
+        preferredDate.getMonth() == dateAsMoment.month() &&
+        preferredDate.getDate() == dateAsMoment.date();
+    }) != null;
+  }
+
+  private datePreferredStart(date: IDayModel): boolean {
+    if (this.datePreferred(date)) {
+      const dateBefore = moment({ year: date.year, month: date.month, day: date.day }).subtract(1, 'd');
+      return !this.datePreferred(new DayModel(dateBefore));
+    }
+    return false;
+  }
+
+  private datePreferredEnd(date: IDayModel): boolean {
+    if (this.datePreferred(date)) {
+      const dateAfter = moment({ year: date.year, month: date.month, day: date.day }).add(1, 'd');
+      return !this.datePreferred(new DayModel(dateAfter));
+    }
+    return false;
+  }
+  private datePreferredMiddle(date: IDayModel): boolean {
+    if (this.datePreferred(date)) {
+      const dateAfter = moment({ year: date.year, month: date.month, day: date.day }).add(1, 'd');
+      const dateBefore = moment({ year: date.year, month: date.month, day: date.day }).subtract(1, 'd');
+      return this.datePreferred(new DayModel(dateAfter)) && this.datePreferred(new DayModel(dateBefore));
+    }
+    return false;
+  }
+
+  // End Days
+
+  // Months
+  private getMonthsToShowOnTheCalendar() {
+    const months: IMonthModel[] = [
+        new MonthModel("January", 0),
+        new MonthModel("February", 1),
+        new MonthModel("March", 2),
+        new MonthModel("April", 3),
+        new MonthModel("May", 4),
+        new MonthModel("June", 5),
+        new MonthModel("July", 6),
+        new MonthModel("August", 7),
+        new MonthModel("September", 8),
+        new MonthModel("October", 9),
+        new MonthModel("November", 10),
+        new MonthModel("December", 11),
+    ];
+
+    _.each(months, (month: IMonthModel) => {
+      month.isToday = this.isThisMonth(month);
+      month.isSelectedDate = this.isSelectedDateMonth(month);
+    });
+
+    const monthsAsArray: IMonthModel[][] = [];
+    for (let i = 0; i < 4; i++) {
+      monthsAsArray.push(months.slice(i * 3, (i * 3) + 3));
+    }
+
+    this.calendarMonths = monthsAsArray;
+  }
+
+
+  private isThisMonth(month: IMonthModel): boolean {
+    const today = new DayModel(moment());
+    return this.currentYear == today.year && month.month == today.month;
+  }
+
+
+  private isSelectedDateMonth(month: IMonthModel): boolean {
+    const comparedDate = new DayModel(this.selectedDate);
+    return this.currentYear == comparedDate.year && month.month == comparedDate.month;
+  }
+
+  // end month
+
+  // Years
+  private getYearsToShowOnTheCalendar() {
+    const years: IYearModel[] = [];
+    const pageIndexForYear = this.getPageIndexForYear(this.currentYear);
+    const startingYearForThisPage = this.getStartingYearForPage(pageIndexForYear);
+
+    const comparedDate = new DayModel(this.selectedDate);
+    const today = new DayModel(moment())
+
+    for (var i = startingYearForThisPage; i < startingYearForThisPage + this.yearPageCount; i++) {
+      if (i <= this.maxAvailableYear) {
+        years.push({ year: i, isToday: i == today.year, isSelectedDate: i == comparedDate.year });
+      }
+    }
+
+    const total = years.length / 3;
+    const yearsAsArray: IYearModel[][] = [];
+    for (let j = 0; j < total; j++) {
+      yearsAsArray.push(years.slice(j * 3, (j * 3) + 3));
+    }
+
+    this.calendarYears = yearsAsArray;
+  }
+
+  // Click Handlers
+
+  // Clicked on from the calendar html
+  selectDate(date: IDayModel) {
+    if (this.dateDisabled(date)) {
+      return;
+    }
+
+    this.selectedDate = moment({ year: date.year, month: date.month, day: date.day });
+    this.propagateChange(this.selectedDate);
+    this.init();
+
+    this.showCalendar = false;
+  }
+
+  selectMonth(month: IMonthModel) {
+    this.currentMonth = moment({ year: this.currentYear, month: month.month, day: 1}).month();
+    this.getDaysToShowOnTheCalendar();
+    this.changeCalendarState(false);
+  }
+
+  selectYear(year: IYearModel) {
+    this.currentYear = year.year;
+    this.changeCalendarState(false);
+  }
+
+  clear() {
+    this.selectedDate = null;
+    this.propagateChange(this.selectedDate);
+
+    this.showCalendar = false;
+  }
+
+  selectToday() {
+    this.selectDate(new DayModel(moment()));
+  }
+
+  changeCalendarState(backup: boolean) {
+    if (backup) {
+      if (this.calendarState == CalendarState.ShowYears) {
+        return;
+      }
+      else {
+        this.calendarState++;
+      }
+    }
+    else {
+      if (this.calendarState == CalendarState.ShowDates) {
+        return;
+      }
+      else {
+        this.calendarState--;
+      }
+    }
+  }
+
+  changeCalendar(forwards: boolean) {
+    if (this.calendarState == CalendarState.ShowDates) {
+      // Change the month
+      const nextMonth = moment({year: this.currentYear, month: this.currentMonth, day: 1}).add(forwards ? 1 : -1, 'M');
+      this.currentMonth = nextMonth.month();
+      this.currentYear = nextMonth.year();
+
+      this.getDaysToShowOnTheCalendar();
+    }
+    else if (this.calendarState == CalendarState.ShowYears) {
+      // Change the years array
+      const currentPageIndex = this.getPageIndexForYear(this.currentYear);
+      if (forwards) {
+        if (currentPageIndex != (this.yearTotalPages - 1)) {
+          this.currentYear = this.getStartingYearForPage(currentPageIndex + 1);
+        }
+      }
+      else {
+        if (currentPageIndex > 0) {
+          this.currentYear = this.getStartingYearForPage(currentPageIndex - 1);
+        }
+      }
+
+      this.getYearsToShowOnTheCalendar();
+    }
+  }
+
+
+  // View Helpers
+  get prettyDate(): string {
+    if (this.selectedDate) {
+      return this.selectedDate.format(this.dateMask.display);
+    }
+
+    return "";
+  }
+
+  get prettyMonth(): string {
+    if (this.calendarState == CalendarState.ShowYears) {
+      return '' + this.currentYear;
+    }
+    else {
+      return moment({year: this.currentYear, month: this.currentMonth, day: 1}).format("MMMM, YYYY");
+    }
+  }
+
+
+
+  // Date Helpers
+  private get minAvailableYear(): number {
+    return this.minDate.getFullYear();
+  }
+
+  private get maxAvailableYear(): number {
+    return this.maxDate == null ? 9999 : this.maxDate.getFullYear();
+  }
+
+  private get yearTotalPages(): number {
+    return Math.ceil((this.maxAvailableYear - this.minAvailableYear) / this.yearPageCount);
+  }
+
+  private getStartingYearForPage(pageIndex: number): number {
+    return this.minAvailableYear + this.yearPageCount * pageIndex;
+  }
+
+  private getPageIndexForYear(year: number): number {
+    return Math.floor((year - this.minAvailableYear) / this.yearPageCount);
+  }
+
+
+
+
+
+
+
 }
