@@ -54,11 +54,12 @@ export class DatePickerComponent extends CustomControl<Date> {
   set selectedDateFormattedWithMask(value: string) {
     let valid = false;
 
+    this.propagateTouched();
+
     // Remove the mask character from the input.
     value = value.replace(/_/g, "");
     if (value.length == this.dateMask.display.length) {
       const inputAsDate = moment(value, this.dateMask.display);
-
 
       if (inputAsDate.isValid() && inputAsDate.year() >= 1900 && !this.dateDisabled(new DayModel(inputAsDate))) {
         // Date is valid, after 1900, and not disabled.
@@ -302,6 +303,7 @@ export class DatePickerComponent extends CustomControl<Date> {
 
     this.selectedDate = moment({ year: date.year, month: date.month, day: date.day });
     this.propagateChange(this.selectedDate);
+    this.propagateTouched();
     this.init();
 
     this.showCalendar = false;
@@ -321,7 +323,7 @@ export class DatePickerComponent extends CustomControl<Date> {
   clear() {
     this.selectedDate = null;
     this.propagateChange(this.selectedDate);
-
+    this.propagateTouched();
     this.showCalendar = false;
   }
 
